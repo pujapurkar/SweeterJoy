@@ -242,7 +242,7 @@ function ChocolateBoxArt() {
 }
 
 // ── Backend base URL ────────────────────────────────────────────────────────
-const API_URL = 'http://localhost:5000'
+const API_URL = 'https://sweeterjoy.onrender.com'
 
 // ── Main App ──────────────────────────────────────────────────────────────────
 export default function App() {
