@@ -1,0 +1,513 @@
+@import 'tailwindcss';
+
+@font-face {
+  font-family: 'Playfair Display';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('https://static.figma.com/font/PlayfairDisplay_wght__1') format('woff2');
+}
+
+@font-face {
+  font-family: 'Playfair Display';
+  font-style: italic;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('https://static.figma.com/font/PlayfairDisplay-Italic_wght__1') format('woff2');
+}
+
+@font-face {
+  font-family: 'Jost';
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: url('https://static.figma.com/font/Jost_wght__1') format('woff2');
+}
+
+@font-face {
+  font-family: 'Italianno';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('https://static.figma.com/font/Italianno-Regular__1') format('woff2');
+}
+
+@theme {
+  --font-sans: 'Jost', sans-serif;
+  --font-serif: 'Playfair Display', Georgia, serif;
+  --font-script: 'Italianno', cursive;
+
+  --color-cocoa: #0F0E0E;
+  --color-chocolate: #181615;
+  --color-gold: #D4AF37;
+  --color-gold-secondary: #C5A059;
+  --color-gold-hover: #E3BE56;
+  --color-cream: #F5EFE6;
+  --color-muted: #9E9B97;
+  --color-red: #C53A3A;
+}
+
+:root {
+  --background: #0F0E0E;
+  --foreground: #F5EFE6;
+  --card: #181615;
+  --card-foreground: #F5EFE6;
+  --primary: #D4AF37;
+  --primary-foreground: #0F0E0E;
+  --secondary: #1e1a17;
+  --secondary-foreground: #F5EFE6;
+  --muted: #2a2520;
+  --muted-foreground: #9E9B97;
+  --accent: #C5A059;
+  --accent-foreground: #0F0E0E;
+  --border: rgba(212, 175, 55, 0.2);
+  --ring: #D4AF37;
+  --radius: 0px;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: 'Jost', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Hide scrollbars until hover */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(212,175,55,0.3); border-radius: 2px; }
+
+* { scrollbar-width: thin; scrollbar-color: rgba(212,175,55,0.3) transparent; }
+
+@keyframes heroZoom {
+  0% { transform: scale(1); }
+  100% { transform: scale(1.08); }
+}
+
+@keyframes fadeUp {
+  0% { opacity: 0; transform: translateY(32px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@keyframes goldPulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+.hero-zoom {
+  animation: heroZoom 8s ease-out forwards;
+}
+
+.fade-up {
+  animation: fadeUp 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.fade-up-delay {
+  animation: fadeUp 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards;
+  opacity: 0;
+}
+
+.fade-up-delay-2 {
+  animation: fadeUp 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.4s forwards;
+  opacity: 0;
+}
+
+.gold-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #D4AF37, transparent);
+}
+
+.gold-border {
+  border: 1px solid rgba(212, 175, 55, 0.25);
+}
+
+.btn-luxury {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 22px;
+
+  min-width: 215px;
+  height: 64px;
+  padding: 0 30px;
+
+  border: 1px solid #D4AF37;
+  border-radius: 999px;
+
+  background: #0F0E0E;
+  color: #D4AF37;
+
+  font-family: 'Jost', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-luxury:hover {
+  background: #D4AF37;
+  color: #0F0E0E;
+}
+
+.btn-luxury-filled {
+  background: #D4AF37;
+  color: #0F0E0E;
+}
+
+.btn-luxury-filled:hover {
+  background: #E3BE56;
+  border-color: #E3BE56;
+}
+
+/* Product Add To Cart only */
+.product-overlay .btn-luxury {
+  width: 190px;
+  min-width: 190px;
+  height: 52px;
+
+  padding: 0 22px;
+
+  background: #0F0E0E;
+  color: #D4AF37;
+
+  border: 1px solid #D4AF37;
+  border-radius: 999px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+
+  font-family: 'Jost', sans-serif;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+
+  transition: border-color 0.3s ease,
+              color 0.3s ease,
+              transform 0.3s ease;
+}
+
+/* Hover झाल्यावर yellow background करू नको */
+.product-overlay .btn-luxury:hover {
+  background: #0F0E0E;
+  color: #D4AF37;
+  border-color: #D4AF37;
+}
+
+/* Add To Cart initially hidden */
+/* Add To Cart initially hidden */
+.product-overlay {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(15px);
+
+  transition:
+    opacity 0.35s ease,
+    transform 0.35s ease,
+    visibility 0.35s ease;
+}
+
+/* Product Name + Price */
+.product-details {
+  transform: translateY(0);
+  transition: transform 0.35s ease;
+}
+
+/* Card hover */
+.product-card:hover .product-overlay {
+  opacity: 1 !important;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+/* Button दिसल्यावर Name + Price खाली जा */
+.product-card:hover .product-details {
+  transform: translateY(55px);
+}
+
+/* Chocolate थोडं zoom */
+.product-card:hover .product-img {
+  transform: scale(1.05);
+}
+
+/* Product image smooth animation */
+.product-img {
+  transition: transform 0.5s ease;
+}
+
+.nav-dropdown {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(8px);
+  transition: all 0.25s ease;
+}
+
+.nav-item:hover .nav-dropdown {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.counter-num {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2.5rem, 5vw, 4.5rem);
+  font-weight: 400;   /* was 700 — this was making it look like screenshot 2 */
+  color: #D4AF37;
+  line-height: 1;
+}
+
+.testimonial-card {
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.section-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2rem, 4vw, 3.5rem);
+  font-weight: 400;
+  color: #F5EFE6;
+  line-height: 1.15;
+}
+
+.script-accent {
+  font-family: 'Italianno', cursive;
+  font-size: 1.5em;
+  color: #D4AF37;
+}
+
+.overlay-dark {
+  background: linear-gradient(to bottom, rgba(15,14,14,0.3) 0%, rgba(15,14,14,0.7) 100%);
+}
+
+/* Animated rotating gold dots background */
+.gold-dots-rotate {
+  position: absolute;
+  inset: -35%;
+  width: 170%;
+  height: 170%;
+
+  background-image:
+    radial-gradient(circle, rgba(212, 175, 55, 0.8) 1px, transparent 1.5px);
+
+  background-size: 24px 24px;
+
+  animation: rotateGoldDots 35s linear infinite;
+
+  pointer-events: none;
+  z-index: 0;
+}
+
+@keyframes rotateGoldDots {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+  
+}
+/* Gallery zoom on hover */
+.gallery-item {
+  cursor: pointer;
+}
+
+.gallery-item .gallery-img {
+  transition: transform 0.6s ease;
+}
+
+.gallery-item:hover .gallery-img {
+  transform: scale(1.08);
+}
+
+/* ============================================================
+   MOBILE RESPONSIVE FIXES
+   ============================================================ */
+
+/* Tablet & below */
+@media (max-width: 900px) {
+  .brand-story-grid {
+    grid-template-columns: 1fr !important;
+    gap: 56px !important;
+  }
+}
+
+/* Desktop nav / mobile hamburger hard toggle — works even if Tailwind's
+   hidden/md:flex utilities aren't present in the compiled build */
+.mobile-hamburger {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .desktop-nav {
+    display: none !important;
+  }
+  .mobile-hamburger {
+    display: flex !important;
+  }
+}
+
+/* General phone/tablet breakpoint */
+@media (max-width: 768px) {
+  .site-header-inner {
+    padding: 0 20px !important;
+    height: 68px !important;
+    flex-wrap: nowrap !important;
+  }
+
+  /* Hero heading + arrows were overflowing/overlapping on narrow screens */
+  .hero-content-pad {
+    padding: 0 6vw !important;
+  }
+
+  .hero-heading {
+    font-size: clamp(2rem, 9vw, 2.8rem) !important;
+    line-height: 1.18 !important;
+  }
+
+  .hero-arrow {
+    width: 36px !important;
+    height: 36px !important;
+    font-size: 15px !important;
+  }
+
+  .hero-arrow-left {
+    left: 8px !important;
+  }
+
+  .hero-arrow-right {
+    right: 8px !important;
+  }
+
+  .site-logo-img {
+    width: 52px !important;
+    height: 52px !important;
+  }
+
+  .site-logo-text {
+    font-size: 20px !important;
+  }
+
+  .site-logo-tagline {
+    display: none !important;
+  }
+
+  .header-icons-gap {
+    gap: 14px !important;
+    margin-left: 12px !important;
+  }
+
+  .header-search-open {
+    width: 160px !important;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    row-gap: 40px !important;
+    column-gap: 12px !important;
+  }
+
+  .stats-grid .gold-wave-vertical {
+    display: none !important;
+  }
+
+  .footer-grid {
+    grid-template-columns: 1fr !important;
+    gap: 40px !important;
+  }
+
+  .gallery-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 14px !important;
+  }
+
+  .testimonial-arrow-left {
+    left: 0 !important;
+  }
+
+  .testimonial-arrow-right {
+    right: 0 !important;
+  }
+
+  .testimonial-box {
+    padding: 40px 24px !important;
+  }
+
+  .admin-buttons-row {
+    flex-direction: column !important;
+    align-items: center !important;
+  }
+
+  .contact-form-row {
+    flex-direction: column !important;
+  }
+
+  .add-product-modal,
+  .admin-login-modal,
+  .info-modal {
+    width: 92vw !important;
+    padding: 32px 22px !important;
+  }
+}
+
+/* Small phones */
+@media (max-width: 480px) {
+  .gallery-grid {
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+  .btn-luxury {
+    min-width: 160px !important;
+    height: 52px !important;
+    font-size: 10px !important;
+    padding: 0 20px !important;
+    gap: 12px !important;
+  }
+
+  .section-title {
+    font-size: 1.7rem !important;
+  }
+
+  .site-header-inner {
+    padding: 0 14px !important;
+  }
+
+  .footer-social-row {
+    justify-content: center !important;
+  }
+
+  .footer-bottom-row {
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+  }
+
+  .hero-heading {
+    font-size: clamp(1.7rem, 8.5vw, 2.3rem) !important;
+  }
+
+  .hero-arrow-left {
+    left: 4px !important;
+  }
+
+  .hero-arrow-right {
+    right: 4px !important;
+  }
+}
