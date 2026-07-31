@@ -577,26 +577,27 @@ export default function App() {
     setSlideKey(k => k + 1)
   }
 
- async function addToCart(product: Product) {
+async function addToCart(product: Product) {
   setCartCount(c => c + 1)
   setAddedItem(product.name)
   setTimeout(() => setAddedItem(null), 2500)
 
-  const message = `Hi, I want to order this chocolate:
+  const message = `Hi, I want this Chocolate:
 
-${product.name}
-Price: ₹${product.price}
+*${product.name}*
+Price: ${product.price}
+
+${product.img}
 
 Please contact me.`
 
-  const adminNumber = '917038657778' // apna WhatsApp number
+  const adminNumber = '917038657778' // country code + WhatsApp number
 
   const whatsappUrl =
     `https://wa.me/${adminNumber}?text=${encodeURIComponent(message)}`
 
   window.open(whatsappUrl, '_blank')
 }
-
   function scrollToContact() {
     document.getElementById('contact-us')?.scrollIntoView({ behavior: 'smooth' })
   }
