@@ -577,32 +577,25 @@ export default function App() {
     setSlideKey(k => k + 1)
   }
 
-  async function addToCart(product: Product) {
-    setCartCount(c => c + 1)
-    setAddedItem(product.name)
-    setTimeout(() => setAddedItem(null), 2500)
+ async function addToCart(product: Product) {
+  setCartCount(c => c + 1)
+  setAddedItem(product.name)
+  setTimeout(() => setAddedItem(null), 2500)
 
-    const message = `Hi, I want this Chocolate:\n\n*${product.name}*\nPrice: ${product.price}\n\nPlease contact me.`
-    const adminNumber = '917038657778' // country code 91 + admin's WhatsApp number
+  const message = `Hi, I want to order this chocolate:
 
-    // Try native share (mobile) — this can attach the ACTUAL photo, not just a link
-    try {
-      const response = await fetch(product.img)
-      const blob = await response.blob()
-      const file = new File([blob], `${product.name}.jpg`, { type: blob.type })
+${product.name}
+Price: ₹${product.price}
 
-      if (navigator.canShare && navigator.canShare({ files: [file] })) {
-        await navigator.share({ files: [file], text: message })
-        return
-      }
-    } catch {
-      // fall through to WhatsApp text-link fallback below
-    }
+Please contact me.`
 
-    // Fallback (desktop, or if native share isn't supported): text + link
-    const whatsappUrl = `https://wa.me/${adminNumber}?text=${encodeURIComponent(message + '\n\n' + product.img)}`
-    window.open(whatsappUrl, '_blank')
-  }
+  const adminNumber = '917038657778' // apna WhatsApp number
+
+  const whatsappUrl =
+    `https://wa.me/${adminNumber}?text=${encodeURIComponent(message)}`
+
+  window.open(whatsappUrl, '_blank')
+}
 
   function scrollToContact() {
     document.getElementById('contact-us')?.scrollIntoView({ behavior: 'smooth' })
