@@ -3,10 +3,19 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import adminRoutes from './routes/admin';
 import productRoutes from './routes/products';
+import { sendOtpEmail } from './mailer';
 
 dotenv.config();
 const app = express();
-
+app.get('/test-mail', async (req, res) => {
+  try {
+    await sendOtpEmail(process.env.SMTP_EMAIL!, '123456');
+    res.send('Test mail sent');
+  } catch (err) {
+    console.error('TEST MAIL ERROR:', err);
+    res.status(500).send('Mail failed');
+  }
+});
 app.use(
   cors({
     origin: process.env.FRONTEND_URL || 'http://localhost:8443',
