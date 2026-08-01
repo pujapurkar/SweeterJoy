@@ -11,9 +11,9 @@ app.get('/test-mail', async (req, res) => {
   try {
     await sendOtpEmail(process.env.SMTP_EMAIL!, '123456');
     res.send('Test mail sent');
-  } catch (err) {
+  } catch (err: any) {
     console.error('TEST MAIL ERROR:', err);
-    res.status(500).send('Mail failed');
+    res.status(500).send(err?.message || 'Mail failed');
   }
 });
 app.use(
