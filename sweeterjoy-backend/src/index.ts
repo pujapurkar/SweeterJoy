@@ -16,9 +16,20 @@ app.get('/test-mail', async (req, res) => {
     res.status(500).send(err?.message || 'Mail failed');
   }
 });
+
+const allowedOrigins = (process.env.FRONTEND_URL || 'http://localhost:8443')
+  .split(',')
+  .map(o => o.trim());
+
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:8443',
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
     credentials: true,
   })
 );
