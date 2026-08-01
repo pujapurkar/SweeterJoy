@@ -3,7 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import adminRoutes from './routes/admin';
 import productRoutes from './routes/products';
-import { sendOtpEmail } from './mailer';
+import { sendOtpEmail, sendContactEmail } from './mailer';
 
 dotenv.config();
 const app = express();
@@ -42,7 +42,7 @@ app.post('/api/contact', async (req, res) => {
     console.log('Name:', name);
     console.log('Email:', email);
     console.log('Message:', message);
-
+    await sendContactEmail(name, email, message);
     return res.json({
       success: true,
       message: 'Message received successfully',

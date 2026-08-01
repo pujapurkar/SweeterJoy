@@ -1,52 +1,41 @@
-import { Resend } from 'resend';
-import dotenv from 'dotenv';
+import nodemailer from 'nodemailer';
 
-dotenv.config();
+const transporter = nodemailer.createTransport({
+  host: process.env.SMTP_HOST,
+  port: Number(process.env.SMTP_PORT),
+  secure: false,
+  auth: {
+    user: process.env.SMTP_EMAIL,
+    pass: process.env.SMTP_PASSWORD,
+  },
+});
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
-export async function sendOtpEmail(to: string, otp: string) {
-  try {
-    const data = await resend.emails.send({
-      from: 'Sweeter Joy <support@sweeterjoy.com>',
-      to,
-      subject: 'Your password reset OTP',
-      html: `
-        <p>Your OTP to reset your Sweeter Joy admin password is:</p>
-        <h2 style="letter-spacing:4px;">${otp}</h2>
-        <p>This code expires in 10 minutes.</p>
-      `,
-    });
-
-    console.log('MAIL SENT:', data);
-  } catch (err) {
-    console.error('MAIL SEND ERROR:', err);
-    throw err;
-  }
+// Existing OTP function
+export async function sendOtpEmail(email: string, otp: string) {
+  await transporter.sendMail({
+    from: process.env.SMTP_EMAIL,
+    to: email,
+    subject: 'Your OTP Code',
+    text: `Your OTP is ${otp}`,
+  });
 }
 
+// New Contact function
 export async function sendContactEmail(
   name: string,
   email: string,
   message: string
 ) {
-  try {
-    const data = await resend.emails.send({
-      from: 'Sweeter Joy <onboarding@resend.dev>',
-      to: process.env.SMTP_EMAIL!,
-      subject: 'New Contact Form Message',
-      html: `
-        <h3>New Contact Message</h3>
-        <p><b>Name:</b> ${name}</p>
-        <p><b>Email:</b> ${email}</p>
-        <p><b>Message:</b></p>
-        <p>${message}</p>
-      `,
-    });
-
-    console.log('CONTACT MAIL SENT:', data);
-  } catch (err) {
-    console.error('CONTACT MAIL ERROR:', err);
-    throw err;
-  }
+  await transporter.sendMail({
+    from: process.env.SMTP_EMAIL,
+    to: process.env.ADMIN_EMAIL || process.env.SMTP_EMAIL,
+    subject: `New Contact Message from ${name}`,
+    html: `
+      <h2>New Contact Message</h2>
+      <p><strong>Name:</strong> ${name}</p>
+      <p><strong>Email:</strong> ${email}</p>
+      <p><strong>Message:</strong></p>
+      <p>${message}</p>
+    `,
+  });
 }
