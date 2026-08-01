@@ -8,7 +8,7 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 export async function sendOtpEmail(to: string, otp: string) {
   try {
     const data = await resend.emails.send({
-      from: 'Sweeter Joy <onboarding@resend.dev>',
+      from: 'Sweeter Joy <support@sweeterjoy.com>',
       to,
       subject: 'Your password reset OTP',
       html: `
