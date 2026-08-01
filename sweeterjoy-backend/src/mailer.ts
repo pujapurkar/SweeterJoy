@@ -1,33 +1,24 @@
-import nodemailer from 'nodemailer';
+import { Resend } from 'resend';
 
-const transporter = nodemailer.createTransport({
-  host: 'smtp.gmail.com',
-  port: 465,
-  secure: true,
-  auth: {
-    user: process.env.SMTP_EMAIL,
-    pass: process.env.SMTP_APP_PASSWORD,
-  },
-});
-// Existing OTP function
+const resend = new Resend(process.env.RESEND_API_KEY);
+
 export async function sendOtpEmail(email: string, otp: string) {
-  await transporter.sendMail({
-    from: process.env.SMTP_EMAIL,
+  await resend.emails.send({
+    from: 'onboarding@resend.dev',
     to: email,
     subject: 'Your OTP Code',
     text: `Your OTP is ${otp}`,
   });
 }
 
-// New Contact function
 export async function sendContactEmail(
   name: string,
   email: string,
   message: string
 ) {
-  await transporter.sendMail({
-    from: process.env.SMTP_EMAIL,
-    to: process.env.SEED_ADMIN_EMAIL || process.env.SMTP_EMAIL,
+  await resend.emails.send({
+    from: 'onboarding@resend.dev',
+    to: process.env.SEED_ADMIN_EMAIL || process.env.SMTP_EMAIL!,
     subject: `New Contact Message from ${name}`,
     html: `
       <h2>New Contact Message</h2>
