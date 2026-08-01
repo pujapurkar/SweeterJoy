@@ -371,6 +371,7 @@ export default function App() {
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Invalid OTP. Please try again.')
+      setForgotError('') 
       setResetToken(data.resetToken)
       setForgotMessage('OTP verified successfully.')
       setTimeout(() => { setForgotMessage(''); setForgotStep('password') }, 600)
@@ -529,15 +530,41 @@ export default function App() {
     setIsAdminLoggedIn(false)
   }
 
-  function handleContactSubmit(e: React.FormEvent) {
-    e.preventDefault()
-    if (!contactName || !contactEmail || !contactMessage) return
+  async function handleContactSubmit(e: React.FormEvent) {
+  e.preventDefault()
+
+  if (!contactName || !contactEmail || !contactMessage) return
+
+  try {
+    const res = await fetch(`${API_URL}/api/contact`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        name: contactName,
+        email: contactEmail,
+        message: contactMessage,
+      }),
+    })
+
+    const data = await res.json()
+
+    if (!res.ok) {
+      throw new Error(data.error || 'Failed to send message')
+    }
+
     setContactSent(true)
     setContactName('')
     setContactEmail('')
     setContactMessage('')
+
     setTimeout(() => setContactSent(false), 4000)
+  } catch (err) {
+    console.error('Contact form error:', err)
+    alert('Failed to send message')
   }
+}
 
   // Hero autoplay
   useEffect(() => {
