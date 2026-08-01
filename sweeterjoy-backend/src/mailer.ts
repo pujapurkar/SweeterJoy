@@ -14,7 +14,7 @@ export async function sendOtpEmail(to: string, otp: string) {
       html: `
         <p>Your OTP to reset your Sweeter Joy admin password is:</p>
         <h2 style="letter-spacing:4px;">${otp}</h2>
-        <p>This code expires in 10 minutes. If you didn't request this, ignore this email.</p>
+        <p>This code expires in 10 minutes.</p>
       `,
     });
 
@@ -25,7 +25,11 @@ export async function sendOtpEmail(to: string, otp: string) {
   }
 }
 
-export async function sendContactEmail(name: string, email: string, message: string) {
+export async function sendContactEmail(
+  name: string,
+  email: string,
+  message: string
+) {
   try {
     const data = await resend.emails.send({
       from: 'Sweeter Joy <onboarding@resend.dev>',
