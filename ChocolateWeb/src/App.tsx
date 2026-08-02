@@ -6,7 +6,7 @@ import almondDark from './assets/products/almond-dark.png'
 import ourMissionImg from './assets/products/sweeter-joy-promo.png'
 import galleryImg1 from './assets/products/images1.jpeg'
 import galleryImg2 from './assets/products/images2.jpeg'
-import galleryImg3 from './assets/products/images3.jpeg'
+import galleryImg3 from './assets/products/image3.png'
 import galleryImg4 from './assets/products/images4.jpeg'
 import sweeterJoyLogo from './assets/products/SweeterJoyLogo.png'
 import phronixLogo from './assets/products/SweeterJoyLogo.png'
@@ -87,27 +87,6 @@ type TestimonialItem = {
   role: string
   avatar: string
 }
-
-const defaultTestimonials: TestimonialItem[] = [
-  {
-    text: 'A transcendent experience. The dark truffle collection is unlike anything I have tasted — the ganache is impossibly smooth, the finish lingers for minutes. Worth every penny.',
-    name: 'Isabelle Fontaine',
-    role: 'Food Critic, Le Monde',
-    avatar: 'IF',
-  },
-  {
-    text: 'We ordered the gold-foil gift boxes for our corporate event and every single guest was astonished. The presentation alone is museum-worthy. The chocolate itself even more so.',
-    name: 'Sebastian Kraft',
-    role: 'CEO, Atelier Berlin',
-    avatar: 'SK',
-  },
-  {
-    text: "crēms has ruined all other chocolate for me. There is simply nothing comparable. Their seasonal hazelnut praline is something I now plan my calendar around.",
-    name: 'Miriam Alves',
-    role: 'Culinary Director, São Paulo',
-    avatar: 'MA',
-  },
-]
 
 // ── Stats ────────────────────────────────────────────────────────────────────
 // NOTE: this is now only the *initial/fallback* seed list. The live,
@@ -377,9 +356,11 @@ export default function App() {
 
   // ── Testimonials (admin-editable) state ──────────────────────────────────
   // testimonialsList now comes from the backend (same pattern as
-  // productList/statsList/galleryList). defaultTestimonials is kept only
-  // as a fallback so the section never renders empty if the fetch fails.
-  const [testimonialsList, setTestimonialsList] = useState<TestimonialItem[]>(defaultTestimonials)
+  // testimonialsList comes entirely from the backend now — no local
+  // hardcoded fallback, since editing/deleting a fallback item (which has
+  // no database id) caused confusing errors. If the fetch fails or the
+  // table is empty, the section just shows nothing until data loads.
+  const [testimonialsList, setTestimonialsList] = useState<TestimonialItem[]>([])
   const [testimonialsLoading, setTestimonialsLoading] = useState(true)
   const [showEditTestimonial, setShowEditTestimonial] = useState(false)
   const [editingTestimonialIdx, setEditingTestimonialIdx] = useState<number | null>(null)
@@ -405,7 +386,7 @@ export default function App() {
       const res = await fetch(`${API_URL}/api/testimonials`)
       if (!res.ok) throw new Error('bad response')
       const data = await res.json()
-      if (Array.isArray(data) && data.length > 0) {
+      if (Array.isArray(data)) {
         setTestimonialsList(
           data.map((t: any) => ({
             id: t.id,
@@ -417,7 +398,7 @@ export default function App() {
         )
       }
     } catch (err) {
-      console.error('Failed to fetch testimonials, using defaults', err)
+      console.error('Failed to fetch testimonials', err)
     } finally {
       setTestimonialsLoading(false)
     }
@@ -442,6 +423,10 @@ export default function App() {
       return
     }
     const target = testimonialsList[editingTestimonialIdx]
+    if (!target.id) {
+      setEditTestimonialError('This testimonial is not saved in the database yet. Please refresh the page and try again.')
+      return
+    }
     const token = localStorage.getItem('admin_token')
     if (!token) {
       setEditTestimonialError('Session expired, please log in again')
@@ -984,6 +969,7 @@ export default function App() {
 
   // Testimonial autoplay
   useEffect(() => {
+    if (testimonialsList.length === 0) return
     const t = setInterval(() => setTestimonialIdx(i => (i + 1) % testimonialsList.length), 5000)
     return () => clearInterval(t)
   }, [testimonialsList.length])
@@ -1946,7 +1932,7 @@ Please contact me.`
       {/* Left arrow */}
       <button
         className="testimonial-arrow-left"
-        onClick={() => setTestimonialIdx((testimonialIdx - 1 + testimonialsList.length) % testimonialsList.length)}
+        onClick={() => { if (testimonialsList.length > 0) setTestimonialIdx((testimonialIdx - 1 + testimonialsList.length) % testimonialsList.length) }}
         style={{
           position: 'absolute', left: '-7vw', top: '35%', transform: 'translateY(-50%)',
           background: 'none', border: 'none', cursor: 'pointer', color: '#9E9B97',
@@ -1960,7 +1946,7 @@ Please contact me.`
       {/* Right arrow */}
       <button
         className="testimonial-arrow-right"
-        onClick={() => setTestimonialIdx((testimonialIdx + 1) % testimonialsList.length)}
+        onClick={() => { if (testimonialsList.length > 0) setTestimonialIdx((testimonialIdx + 1) % testimonialsList.length) }}
         style={{
           position: 'absolute', right: '-7vw', top: '35%', transform: 'translateY(-50%)',
           background: 'none', border: 'none', cursor: 'pointer', color: '#9E9B97',
@@ -2089,14 +2075,14 @@ Please contact me.`
           fontFamily: 'Playfair Display, serif', fontSize: 20, color: '#D4AF37',
           overflow: 'hidden',
         }}>
-          {testimonialsList[testimonialIdx].avatar}
+          {testimonialsList[testimonialIdx]?.avatar}
         </div>
         <div>
           <div style={{ fontFamily: 'Playfair Display, serif', fontSize: 18, color: '#F5EFE6', marginBottom: 4 }}>
-            {testimonialsList[testimonialIdx].name}
+            {testimonialsList[testimonialIdx]?.name}
           </div>
           <div style={{ fontSize: 10, letterSpacing: '0.18em', color: '#9E9B97', textTransform: 'uppercase' }}>
-            {testimonialsList[testimonialIdx].role}
+            {testimonialsList[testimonialIdx]?.role}
           </div>
         </div>
       </div>
