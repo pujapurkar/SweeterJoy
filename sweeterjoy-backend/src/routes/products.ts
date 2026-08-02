@@ -8,18 +8,31 @@ const router = Router();
 const upload = multer({ storage: multer.memoryStorage() });
 
 // Public — website ke Products section ke liye
+// Optional ?category=Almond query param se filter ho sakta hai
 router.get('/', async (req, res) => {
-  const result = await pool.query('SELECT * FROM products ORDER BY created_at DESC');
+  const { category } = req.query;
+
+  let result;
+  if (category && typeof category === 'string') {
+    result = await pool.query(
+      'SELECT * FROM products WHERE category = $1 ORDER BY created_at DESC',
+      [category]
+    );
+  } else {
+    result = await pool.query('SELECT * FROM products ORDER BY created_at DESC');
+  }
+
   res.json(result.rows);
 });
 
 // Admin-protected — naya product add
 router.post('/', verifyAdmin, upload.single('image'), async (req, res) => {
   try {
-    const { name, price, originalPrice, tag } = req.body;
+    const { name, price, originalPrice, tag, weight, category } = req.body;
 
-    if (!name || !price || !req.file) {
-      return res.status(400).json({ error: 'Name, price and image are required' });
+    // Price is now OPTIONAL — only name and image are required
+    if (!name || !req.file) {
+      return res.status(400).json({ error: 'Name and image are required' });
     }
 
     const uploadResult: any = await new Promise((resolve, reject) => {
@@ -32,9 +45,17 @@ router.post('/', verifyAdmin, upload.single('image'), async (req, res) => {
     });
 
     const result = await pool.query(
-      `INSERT INTO products (name, price, original_price, tag, image_url)
-       VALUES ($1, $2, $3, $4, $5) RETURNING *`,
-      [name, price, originalPrice || null, tag || null, uploadResult.secure_url]
+      `INSERT INTO products (name, price, original_price, tag, weight, category, image_url)
+       VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`,
+      [
+        name,
+        price || null,
+        originalPrice || null,
+        tag || null,
+        weight || null,
+        category || null,
+        uploadResult.secure_url,
+      ]
     );
 
     res.status(201).json(result.rows[0]);

@@ -6,10 +6,10 @@ import almondDark from './assets/products/almond-dark.png'
 import ourMissionImg from './assets/products/sweeter-joy-promo.png'
 import galleryImg1 from './assets/products/images1.jpeg'
 import galleryImg2 from './assets/products/images2.jpeg'
-import galleryImg3 from './assets/products/image3.png'
+import galleryImg3 from './assets/products/images3.jpeg'
 import galleryImg4 from './assets/products/images4.jpeg'
 import sweeterJoyLogo from './assets/products/SweeterJoyLogo.png'
-import phronixLogo from './assets/products/Phronixlogo.jpeg';
+import phronixLogo from './assets/products/SweeterJoyLogo.png'
 // ── Hero slides ──────────────────────────────────────────────────────────────
 const heroSlides = [
   {
@@ -40,6 +40,7 @@ type Product = {
   img: string
   originalPrice?: string
   tag?: string | null
+  weight?: string | null
 }
 
 const products: Product[] = [
@@ -48,18 +49,21 @@ const products: Product[] = [
     price: '₹120',
     img: milkChocolate,
     tag: null,
+    weight: null,
   },
   {
    name: 'Dry Fruit Chocolate',
    price: '₹180',
     img: pastryChocolate,
     tag: null,
+    weight: null,
   },
   {
     name: 'Almond Chocolate',
     price: '₹150',
     img: vanillaTruffle,
     tag: null,
+    weight: null,
   },
   {
     name: 'Dates Chocolate',
@@ -67,11 +71,24 @@ const products: Product[] = [
     originalPrice: '₹200',
     img: almondDark,
     tag: 'SALE',
+    weight: null,
   },
 ]
 
 // ── Testimonials ─────────────────────────────────────────────────────────────
-const testimonials = [
+// NOTE: this is now only the *initial/fallback* seed list. The live,
+// render-facing list lives in state (`testimonialsList`) inside App() so
+// admin edits made in the "Edit Testimonial" panel show up immediately,
+// the same pattern used for productList/statsList/galleryList.
+type TestimonialItem = {
+  id?: number
+  text: string
+  name: string
+  role: string
+  avatar: string
+}
+
+const defaultTestimonials: TestimonialItem[] = [
   {
     text: 'A transcendent experience. The dark truffle collection is unlike anything I have tasted — the ganache is impossibly smooth, the finish lingers for minutes. Worth every penny.',
     name: 'Isabelle Fontaine',
@@ -93,26 +110,52 @@ const testimonials = [
 ]
 
 // ── Stats ────────────────────────────────────────────────────────────────────
-const stats = [
-  { value: 100, label: 'Happy Customers' },
-  { value: 8, label: 'Chocolate Varieties' },
-  { value: 150, label: 'Orders Made' },
-  { value: 5, label: 'Gift Options' },
+// NOTE: this is now only the *initial/fallback* seed list. The live,
+// render-facing list lives in state (`statsList`) inside App() so admin
+// edits made in the "Edit Stats" panel show up immediately without a
+// page reload, the same pattern used for productList.
+type StatItem = {
+  key: string
+  value: number
+  label: string
+}
+
+const defaultStats: StatItem[] = [
+  { key: 'customers', value: 100, label: 'Happy Customers' },
+  { key: 'varieties', value: 8, label: 'Chocolate Varieties' },
+  { key: 'orders', value: 150, label: 'Orders Made' },
+  { key: 'giftOptions', value: 5, label: 'Gift Options' },
+]
+
+// ── Gallery ──────────────────────────────────────────────────────────────────
+// NOTE: same pattern as products/stats — this is only the initial/fallback
+// seed list. The live, render-facing list lives in state (`galleryList`)
+// inside App() so images added from the admin panel show up immediately.
+type GalleryItem = {
+  id?: number
+  img: string
+}
+
+const defaultGallery: GalleryItem[] = [
+  { img: galleryImg1 },
+  { img: galleryImg2 },
+  { img: galleryImg3 },
+  { img: galleryImg4 },
 ]
 
 // ── Nav items ────────────────────────────────────────────────────────────────
 const navItems = [
   {
     label: 'Home',
-    items: ['Plain chocolate', 'Dry fruit', 'Dry fruit madi', 'Almond', 'cashews','dates','peanuts'],
+    items: [],
   },
   {
     label: 'About Us',
-    items: ['About Us', 'Our Services', 'Testimonials', 'FAQ', 'Gallery', 'Admin Profile'],
+    items: ['About Us', 'Testimonials', 'FAQ', 'Gallery', 'Admin Profile'],
   },
   {
-    label: 'Products',
-    items: ['Shop', 'Cart', 'Checkout',],
+    label: 'Category',
+    items: ['Plain chocolate', 'Dry fruit', 'Dry fruit madi', 'Almond', 'Cashews', 'Dates', 'Peanuts'],
   },
   { label: 'Contact', items: [] },
 ]
@@ -262,6 +305,10 @@ export default function App() {
   // ── "Read More" info modal state ─────────────────────────────────────────
   const [showInfoModal, setShowInfoModal] = useState(false)
 
+  // ── Privacy Policy / Terms & Conditions modal state ─────────────────────
+  const [showPrivacyModal, setShowPrivacyModal] = useState(false)
+  const [showTermsModal, setShowTermsModal] = useState(false)
+
   // ── Contact form (footer) state ──────────────────────────────────────────
   const [contactName, setContactName] = useState('')
   const [contactEmail, setContactEmail] = useState('')
@@ -279,6 +326,7 @@ export default function App() {
   const [showAddProduct, setShowAddProduct] = useState(false)
   const [adminUser, setAdminUser] = useState('')
   const [adminPass, setAdminPass] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
   const [loginError, setLoginError] = useState('')
 
   // ── Forgot Password / OTP / Reset Password state ───────────────────────────
@@ -297,10 +345,196 @@ export default function App() {
   const [newPrice, setNewPrice] = useState('')
   const [newOriginalPrice, setNewOriginalPrice] = useState('')
   const [newTag, setNewTag] = useState('')
+  const [newWeight, setNewWeight] = useState('')
+  const [newCategory, setNewCategory] = useState('');
   const [newImgPreview, setNewImgPreview] = useState<string | null>(null)
   const [newImageFile, setNewImageFile] = useState<File | null>(null)
   const [addProductError, setAddProductError] = useState('')
   const [addProductSubmitting, setAddProductSubmitting] = useState(false)
+
+  // ── Stats (dynamic, admin-editable) state ───────────────────────────────────
+  // statsList comes from the backend (same pattern as productList). The
+  // static `defaultStats` array above is kept only as a fallback so the
+  // section never renders empty if the fetch fails.
+  const [statsList, setStatsList] = useState<StatItem[]>(defaultStats)
+  const [statsLoading, setStatsLoading] = useState(true)
+  const [showEditStats, setShowEditStats] = useState(false)
+  const [editStatsValues, setEditStatsValues] = useState<Record<string, string>>({})
+  const [statsSaveError, setStatsSaveError] = useState('')
+  const [statsSaving, setStatsSaving] = useState(false)
+
+  // ── Gallery (dynamic, admin-editable) state ─────────────────────────────────
+  // galleryList comes from the backend (same pattern as productList/statsList).
+  // defaultGallery is kept only as a fallback so the section never renders
+  // empty if the fetch fails.
+  const [galleryList, setGalleryList] = useState<GalleryItem[]>(defaultGallery)
+  const [galleryLoading, setGalleryLoading] = useState(true)
+  const [showAddGallery, setShowAddGallery] = useState(false)
+  const [newGalleryPreview, setNewGalleryPreview] = useState<string | null>(null)
+  const [newGalleryFile, setNewGalleryFile] = useState<File | null>(null)
+  const [addGalleryError, setAddGalleryError] = useState('')
+  const [addGallerySubmitting, setAddGallerySubmitting] = useState(false)
+
+  // ── Testimonials (admin-editable) state ──────────────────────────────────
+  // testimonialsList now comes from the backend (same pattern as
+  // productList/statsList/galleryList). defaultTestimonials is kept only
+  // as a fallback so the section never renders empty if the fetch fails.
+  const [testimonialsList, setTestimonialsList] = useState<TestimonialItem[]>(defaultTestimonials)
+  const [testimonialsLoading, setTestimonialsLoading] = useState(true)
+  const [showEditTestimonial, setShowEditTestimonial] = useState(false)
+  const [editingTestimonialIdx, setEditingTestimonialIdx] = useState<number | null>(null)
+  const [editTestimonialText, setEditTestimonialText] = useState('')
+  const [editTestimonialName, setEditTestimonialName] = useState('')
+  const [editTestimonialRole, setEditTestimonialRole] = useState('')
+  const [editTestimonialAvatar, setEditTestimonialAvatar] = useState('')
+  const [editTestimonialError, setEditTestimonialError] = useState('')
+  const [editTestimonialSaving, setEditTestimonialSaving] = useState(false)
+
+  // ── Add Testimonial (admin-only) state ───────────────────────────────────
+  const [showAddTestimonial, setShowAddTestimonial] = useState(false)
+  const [newTestimonialText, setNewTestimonialText] = useState('')
+  const [newTestimonialName, setNewTestimonialName] = useState('')
+  const [newTestimonialRole, setNewTestimonialRole] = useState('')
+  const [newTestimonialAvatar, setNewTestimonialAvatar] = useState('')
+  const [addTestimonialError, setAddTestimonialError] = useState('')
+  const [addTestimonialSubmitting, setAddTestimonialSubmitting] = useState(false)
+
+  async function fetchTestimonials() {
+    try {
+      setTestimonialsLoading(true)
+      const res = await fetch(`${API_URL}/api/testimonials`)
+      if (!res.ok) throw new Error('bad response')
+      const data = await res.json()
+      if (Array.isArray(data) && data.length > 0) {
+        setTestimonialsList(
+          data.map((t: any) => ({
+            id: t.id,
+            text: t.text,
+            name: t.name,
+            role: t.role,
+            avatar: t.avatar,
+          }))
+        )
+      }
+    } catch (err) {
+      console.error('Failed to fetch testimonials, using defaults', err)
+    } finally {
+      setTestimonialsLoading(false)
+    }
+  }
+
+  function openEditTestimonial(idx: number) {
+    const t = testimonialsList[idx]
+    setEditingTestimonialIdx(idx)
+    setEditTestimonialText(t.text)
+    setEditTestimonialName(t.name)
+    setEditTestimonialRole(t.role)
+    setEditTestimonialAvatar(t.avatar)
+    setEditTestimonialError('')
+    setShowEditTestimonial(true)
+  }
+
+  async function handleSaveTestimonial(e: React.FormEvent) {
+    e.preventDefault()
+    if (editingTestimonialIdx === null) return
+    if (!editTestimonialText.trim() || !editTestimonialName.trim() || !editTestimonialRole.trim()) {
+      setEditTestimonialError('Please fill in the quote, name and role.')
+      return
+    }
+    const target = testimonialsList[editingTestimonialIdx]
+    const token = localStorage.getItem('admin_token')
+    if (!token) {
+      setEditTestimonialError('Session expired, please log in again')
+      setIsAdminLoggedIn(false)
+      return
+    }
+    try {
+      setEditTestimonialSaving(true)
+      const res = await fetch(`${API_URL}/api/testimonials/${target.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({
+          text: editTestimonialText.trim(),
+          name: editTestimonialName.trim(),
+          role: editTestimonialRole.trim(),
+          avatar: editTestimonialAvatar.trim() || editTestimonialName.trim().slice(0, 2).toUpperCase(),
+        }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Failed to save testimonial')
+      await fetchTestimonials()
+      setShowEditTestimonial(false)
+      setEditingTestimonialIdx(null)
+    } catch (err: any) {
+      setEditTestimonialError(err.message || 'Failed to save testimonial')
+    } finally {
+      setEditTestimonialSaving(false)
+    }
+  }
+
+  // ── Open the "Add Testimonial" form, resetting its fields ───────────────
+  function openAddTestimonial() {
+    setNewTestimonialText('')
+    setNewTestimonialName('')
+    setNewTestimonialRole('')
+    setNewTestimonialAvatar('')
+    setAddTestimonialError('')
+    setShowAddTestimonial(true)
+  }
+
+  // ── Send the new testimonial to the backend and jump the carousel to it
+  // so the admin immediately sees the result of what they just added. ─────
+  async function handleAddTestimonial(e: React.FormEvent) {
+    e.preventDefault()
+    if (!newTestimonialText.trim() || !newTestimonialName.trim() || !newTestimonialRole.trim()) {
+      setAddTestimonialError('Please fill in the quote, name and role.')
+      return
+    }
+    const token = localStorage.getItem('admin_token')
+    if (!token) {
+      setAddTestimonialError('Session expired, please log in again')
+      setIsAdminLoggedIn(false)
+      return
+    }
+    try {
+      setAddTestimonialSubmitting(true)
+      const res = await fetch(`${API_URL}/api/testimonials`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify({
+          text: newTestimonialText.trim(),
+          name: newTestimonialName.trim(),
+          role: newTestimonialRole.trim(),
+          avatar: newTestimonialAvatar.trim() || newTestimonialName.trim().slice(0, 2).toUpperCase(),
+        }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Failed to add testimonial')
+      await fetchTestimonials()
+      setTestimonialIdx(testimonialsList.length) // jump carousel to the newly added testimonial
+      setShowAddTestimonial(false)
+    } catch (err: any) {
+      setAddTestimonialError(err.message || 'Failed to add testimonial')
+    } finally {
+      setAddTestimonialSubmitting(false)
+    }
+  }
+
+  async function handleDeleteTestimonial(id: number | undefined) {
+    if (!id) return
+    const token = localStorage.getItem('admin_token')
+    if (!token) return
+    try {
+      await fetch(`${API_URL}/api/testimonials/${id}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      setTestimonialsList(list => list.filter(t => t.id !== id))
+      setTestimonialIdx(0)
+    } catch (err) {
+      console.error('Failed to delete testimonial', err)
+    }
+  }
 
   async function handleAdminLogin(e: React.FormEvent) {
     e.preventDefault()
@@ -371,7 +605,6 @@ export default function App() {
       })
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Invalid OTP. Please try again.')
-      setForgotError('') 
       setResetToken(data.resetToken)
       setForgotMessage('OTP verified successfully.')
       setTimeout(() => { setForgotMessage(''); setForgotStep('password') }, 600)
@@ -433,9 +666,12 @@ export default function App() {
     setNewPrice('')
     setNewOriginalPrice('')
     setNewTag('')
+    setNewWeight('')
+    setNewCategory('');
     setNewImgPreview(null)
     setNewImageFile(null)
     setAddProductError('')
+    
   }
 
   async function fetchProducts() {
@@ -451,6 +687,7 @@ export default function App() {
           img: p.image_url,
           originalPrice: p.original_price || undefined,
           tag: p.tag || null,
+          weight: p.weight || null,
         }))
       )
     } catch (err) {
@@ -463,10 +700,10 @@ export default function App() {
   async function handleAddProduct(e: React.FormEvent) {
     e.preventDefault()
     setAddProductError('')
-    if (!newName || !newPrice || !newImageFile) {
-      setAddProductError('Name, price and image are required')
-      return
-    }
+   if (!newName || !newPrice || !newCategory || !newImageFile) {
+  setAddProductError("Name, Category, Price and Image are required");
+  return;
+}
     const token = localStorage.getItem('admin_token')
     if (!token) {
       setAddProductError('Session expired, please log in again')
@@ -478,7 +715,9 @@ export default function App() {
     formData.append('price', newPrice)
     formData.append('originalPrice', newOriginalPrice)
     formData.append('tag', newTag)
+    formData.append('weight', newWeight)
     formData.append('image', newImageFile)
+    formData.append('category', newCategory)
 
     try {
       setAddProductSubmitting(true)
@@ -514,9 +753,185 @@ export default function App() {
     }
   }
 
+  // ── Stats: fetch / save (same pattern as products) ──────────────────────────
+  async function fetchStats() {
+    try {
+      setStatsLoading(true)
+      const res = await fetch(`${API_URL}/api/stats`)
+      if (!res.ok) throw new Error('bad response')
+      const data = await res.json()
+      // Expected backend shape: [{ key, value, label }, ...]
+      if (Array.isArray(data) && data.length > 0) {
+        setStatsList(
+          data.map((s: any) => ({
+            key: s.key,
+            value: Number(s.value),
+            label: s.label,
+          }))
+        )
+      }
+    } catch (err) {
+      console.error('Failed to fetch stats, using defaults', err)
+    } finally {
+      setStatsLoading(false)
+    }
+  }
+
+  function openEditStats() {
+    const initial: Record<string, string> = {}
+    statsList.forEach(s => { initial[s.key] = String(s.value) })
+    setEditStatsValues(initial)
+    setStatsSaveError('')
+    setShowEditStats(true)
+  }
+
+  async function handleSaveStats(e: React.FormEvent) {
+    e.preventDefault()
+    setStatsSaveError('')
+    const token = localStorage.getItem('admin_token')
+    if (!token) {
+      setStatsSaveError('Session expired, please log in again')
+      setIsAdminLoggedIn(false)
+      return
+    }
+
+    const updated = statsList.map(s => ({
+      ...s,
+      value: Number(editStatsValues[s.key] ?? s.value) || 0,
+    }))
+
+    try {
+      setStatsSaving(true)
+      const res = await fetch(`${API_URL}/api/stats`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+        body: JSON.stringify(updated),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Failed to save stats')
+      setStatsList(updated)
+      setShowEditStats(false)
+    } catch (err: any) {
+      setStatsSaveError(err.message || 'Failed to save stats')
+    } finally {
+      setStatsSaving(false)
+    }
+  }
+
+  // ── Gallery: fetch / add / delete (same pattern as products) ────────────────
+  async function fetchGallery() {
+    try {
+      setGalleryLoading(true)
+      const res = await fetch(`${API_URL}/api/gallery`)
+      if (!res.ok) throw new Error('bad response')
+      const data = await res.json()
+      if (Array.isArray(data) && data.length > 0) {
+        setGalleryList(
+          data.map((g: any) => ({
+            id: g.id,
+            img: g.image_url,
+          }))
+        )
+      }
+    } catch (err) {
+      console.error('Failed to fetch gallery, using defaults', err)
+    } finally {
+      setGalleryLoading(false)
+    }
+  }
+
+  function handleGalleryImageUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setNewGalleryFile(file)
+    const reader = new FileReader()
+    reader.onload = () => setNewGalleryPreview(reader.result as string)
+    reader.readAsDataURL(file)
+  }
+
+  function resetAddGalleryForm() {
+    setNewGalleryPreview(null)
+    setNewGalleryFile(null)
+    setAddGalleryError('')
+  }
+
+  async function handleAddGalleryImage(e: React.FormEvent) {
+    e.preventDefault()
+    setAddGalleryError('')
+    if (!newGalleryFile) {
+      setAddGalleryError('Please choose an image to upload')
+      return
+    }
+    const token = localStorage.getItem('admin_token')
+    if (!token) {
+      setAddGalleryError('Session expired, please log in again')
+      setIsAdminLoggedIn(false)
+      return
+    }
+    const formData = new FormData()
+    formData.append('image', newGalleryFile)
+
+    try {
+      setAddGallerySubmitting(true)
+      const res = await fetch(`${API_URL}/api/gallery`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
+        body: formData,
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Failed to add image')
+      await fetchGallery()
+      resetAddGalleryForm()
+      setShowAddGallery(false)
+    } catch (err: any) {
+      setAddGalleryError(err.message || 'Failed to add image')
+    } finally {
+      setAddGallerySubmitting(false)
+    }
+  }
+
+  // ── UPDATED: now handles gallery items that don't have a backend id
+  // (e.g. the default/fallback images shown before the API has loaded, or
+  // if the API call failed). Those get removed straight from local state
+  // instead of silently doing nothing, so the ✕ button always works from
+  // the moment it's visible.
+  async function handleDeleteGalleryImage(id: number | undefined) {
+    if (!id) {
+      // No backend id (default/fallback image) — just remove it locally.
+      setGalleryList(list => list.filter(g => g.id !== id))
+      return
+    }
+    const token = localStorage.getItem('admin_token')
+    if (!token) return
+    try {
+      await fetch(`${API_URL}/api/gallery/${id}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      setGalleryList(list => list.filter(g => g.id !== id))
+    } catch (err) {
+      console.error('Failed to delete gallery image', err)
+    }
+  }
+
   // Fetch products from the backend on first load
   useEffect(() => {
     fetchProducts()
+  }, [])
+
+  // Fetch stats from the backend on first load
+  useEffect(() => {
+    fetchStats()
+  }, [])
+
+  // Fetch gallery images from the backend on first load
+  useEffect(() => {
+    fetchGallery()
+  }, [])
+
+  // Fetch testimonials from the backend on first load
+  useEffect(() => {
+    fetchTestimonials()
   }, [])
 
   // Restore admin session if a token from a previous login is still saved
@@ -530,41 +945,15 @@ export default function App() {
     setIsAdminLoggedIn(false)
   }
 
-  async function handleContactSubmit(e: React.FormEvent) {
-  e.preventDefault()
-
-  if (!contactName || !contactEmail || !contactMessage) return
-
-  try {
-    const res = await fetch(`${API_URL}/api/contact`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        name: contactName,
-        email: contactEmail,
-        message: contactMessage,
-      }),
-    })
-
-    const data = await res.json()
-
-    if (!res.ok) {
-      throw new Error(data.error || 'Failed to send message')
-    }
-
+  function handleContactSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    if (!contactName || !contactEmail || !contactMessage) return
     setContactSent(true)
     setContactName('')
     setContactEmail('')
     setContactMessage('')
-
     setTimeout(() => setContactSent(false), 4000)
-  } catch (err) {
-    console.error('Contact form error:', err)
-    alert('Failed to send message')
   }
-}
 
   // Hero autoplay
   useEffect(() => {
@@ -595,9 +984,9 @@ export default function App() {
 
   // Testimonial autoplay
   useEffect(() => {
-    const t = setInterval(() => setTestimonialIdx(i => (i + 1) % testimonials.length), 5000)
+    const t = setInterval(() => setTestimonialIdx(i => (i + 1) % testimonialsList.length), 5000)
     return () => clearInterval(t)
-  }, [])
+  }, [testimonialsList.length])
 
   function goSlide(n: number) {
     setSlide(n)
@@ -612,7 +1001,7 @@ async function addToCart(product: Product) {
   const message = `Hi, I want this Chocolate:
 
 *${product.name}*
-Price: ${product.price}
+Price: ${product.price}${product.weight ? `\nWeight: ${product.weight}` : ''}
 
 ${product.img}
 
@@ -628,6 +1017,13 @@ Please contact me.`
   function scrollToContact() {
     document.getElementById('contact-us')?.scrollIntoView({ behavior: 'smooth' })
   }
+
+  function scrollToTop() {
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth",
+  });
+}
 
   // Generic scroll for nav dropdown sub-items (About Us, Testimonials, FAQ, Gallery).
   // Labels without a matching section id are ignored (link just does nothing yet).
@@ -725,7 +1121,13 @@ Please contact me.`
             {navItems.map(item => (
               <div key={item.label} className="nav-item" style={{ position: 'relative' }}>
                 <button
-                  onClick={item.label === 'Contact' ? scrollToContact : undefined}
+                 onClick={() => {
+                  if (item.label === "Home") {
+                    scrollToTop();
+                  } else if (item.label === "Contact") {
+                    scrollToContact();
+                  }
+                }}
                   style={{
                     background: 'none', border: 'none', cursor: 'pointer',
                     padding: '8px 16px', color: '#F5EFE6', fontFamily: 'Jost, sans-serif',
@@ -818,24 +1220,7 @@ Please contact me.`
                 </svg>
               </button>
             )}
-            {/* Cart */}
-            <button style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#9E9B97', position: 'relative', transition: 'color 0.2s' }}
-              onMouseEnter={e => (e.currentTarget.style.color = '#D4AF37')}
-              onMouseLeave={e => (e.currentTarget.style.color = '#9E9B97')}>
-              <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
-                <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" /><line x1="3" y1="6" x2="21" y2="6" /><path d="M16 10a4 4 0 0 1-8 0" />
-              </svg>
-              {cartCount > 0 && (
-                <span style={{
-                  position: 'absolute', top: -8, right: -8,
-                  background: '#D4AF37', color: '#0F0E0E', borderRadius: '50%',
-                  width: 16, height: 16, fontSize: 9, fontWeight: 700,
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                }}>
-                  {cartCount}
-                </span>
-              )}
-            </button>
+           
             {/* Mobile hamburger */}
             <button
               style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#F5EFE6', display: 'flex', flexDirection: 'column', gap: 5 }}
@@ -1008,16 +1393,6 @@ Please contact me.`
   with care, packed with love, and made to bring a little joy to your day.
 </p>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 40 }}>
-              <svg width="18" height="18" fill="none" stroke="#D4AF37" strokeWidth="1.3" viewBox="0 0 24 24">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                <path d="M14 2v6h6" />
-              </svg>
-              <a href="#" style={{ fontSize: 14, color: '#F5EFE6', textDecoration: 'none', letterSpacing: '0.02em' }}>
-                Download Price
-              </a>
-            </div>
-
             <a
               href="#"
               onClick={(e) => { e.preventDefault(); setShowInfoModal(true) }}
@@ -1137,7 +1512,7 @@ Please contact me.`
           }}
         >
           <div style={{ textAlign: 'center', marginBottom: 64 }}>
-            {isAdminLoggedIn && (
+            {isAdminLoggedIn && !showAddProduct && (
               <div className="admin-buttons-row" style={{
                 display: 'flex', justifyContent: 'center', gap: 12, marginBottom: 24,
               }}>
@@ -1360,6 +1735,19 @@ Please contact me.`
                         </span>
                       )}
                   </div>
+
+                  {product.weight && (
+                    <div
+                      style={{
+                        fontSize: 11,
+                        color: '#9E9B97',
+                        marginTop: 4,
+                        letterSpacing: '0.05em',
+                      }}
+                    >
+                      {product.weight}
+                    </div>
+                  )}
                 </div>
               </div>
             ))
@@ -1494,15 +1882,29 @@ Please contact me.`
           STATISTICS
       ══════════════════════════════════════════════════════ */}
       <section ref={statsRef} style={{ background: '#0F0E0E', padding: '80px 8vw', borderTop: '1px solid rgba(212,175,55,0.1)', borderBottom: '1px solid rgba(212,175,55,0.1)' }}>
+        {isAdminLoggedIn && (
+          <div style={{ textAlign: 'center', marginBottom: 32 }}>
+            <button
+              onClick={openEditStats}
+              style={{
+                background: 'transparent', border: '1px solid #D4AF37', color: '#D4AF37',
+                fontSize: 10, letterSpacing: '0.18em', textTransform: 'uppercase',
+                padding: '10px 18px', cursor: 'pointer', fontFamily: 'Jost, sans-serif',
+              }}
+            >
+              Edit Stats
+            </button>
+          </div>
+        )}
         <div className="stats-grid" style={{
           maxWidth: 1100, margin: '0 auto',
           display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)',
           alignItems: 'center',
         }}>
-          {stats.map((stat, i) => (
-            <div key={stat.label} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          {statsList.map((stat, i) => (
+            <div key={stat.key} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <StatCounter value={stat.value} label={stat.label} started={statsVisible} />
-              {i < stats.length - 1 && (
+              {i < statsList.length - 1 && (
                 <div className="gold-wave-vertical" style={{ height: 110, display: 'flex', alignItems: 'center' }}>
                   <GoldWaveVertical />
                 </div>
@@ -1544,7 +1946,7 @@ Please contact me.`
       {/* Left arrow */}
       <button
         className="testimonial-arrow-left"
-        onClick={() => setTestimonialIdx((testimonialIdx - 1 + testimonials.length) % testimonials.length)}
+        onClick={() => setTestimonialIdx((testimonialIdx - 1 + testimonialsList.length) % testimonialsList.length)}
         style={{
           position: 'absolute', left: '-7vw', top: '35%', transform: 'translateY(-50%)',
           background: 'none', border: 'none', cursor: 'pointer', color: '#9E9B97',
@@ -1558,7 +1960,7 @@ Please contact me.`
       {/* Right arrow */}
       <button
         className="testimonial-arrow-right"
-        onClick={() => setTestimonialIdx((testimonialIdx + 1) % testimonials.length)}
+        onClick={() => setTestimonialIdx((testimonialIdx + 1) % testimonialsList.length)}
         style={{
           position: 'absolute', right: '-7vw', top: '35%', transform: 'translateY(-50%)',
           background: 'none', border: 'none', cursor: 'pointer', color: '#9E9B97',
@@ -1590,8 +1992,65 @@ Please contact me.`
           <rect width="100%" height="100%" fill="url(#testimonialTexture)" />
         </svg>
 
+        {/* Admin edit / add buttons — "+" opens a form to add a brand-new
+            testimonial, "✎" opens a form to edit the one currently shown. */}
+        {isAdminLoggedIn && (
+          <div style={{ position: 'absolute', top: 12, right: 12, zIndex: 2, display: 'flex', gap: 8 }}>
+            <button
+              onClick={openAddTestimonial}
+              aria-label="Add testimonial"
+              title="Add testimonial"
+              style={{
+                width: 30, height: 30, borderRadius: '50%',
+                background: 'rgba(15,14,14,0.85)', border: '1px solid #D4AF37',
+                color: '#D4AF37', fontSize: 16, lineHeight: 1,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                cursor: 'pointer', transition: 'background 0.2s, color 0.2s',
+              }}
+              onMouseEnter={e => { e.currentTarget.style.background = '#D4AF37'; e.currentTarget.style.color = '#0F0E0E' }}
+              onMouseLeave={e => { e.currentTarget.style.background = 'rgba(15,14,14,0.85)'; e.currentTarget.style.color = '#D4AF37' }}
+            >
+              +
+            </button>
+            <button
+              onClick={() => openEditTestimonial(testimonialIdx)}
+              aria-label="Edit testimonial"
+              title="Edit testimonial"
+              style={{
+                width: 30, height: 30, borderRadius: '50%',
+                background: 'rgba(15,14,14,0.85)', border: '1px solid #D4AF37',
+                color: '#D4AF37', fontSize: 13, lineHeight: 1,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                cursor: 'pointer', transition: 'background 0.2s, color 0.2s',
+              }}
+              onMouseEnter={e => { e.currentTarget.style.background = '#D4AF37'; e.currentTarget.style.color = '#0F0E0E' }}
+              onMouseLeave={e => { e.currentTarget.style.background = 'rgba(15,14,14,0.85)'; e.currentTarget.style.color = '#D4AF37' }}
+            >
+              ✎
+            </button>
+            {testimonialsList.length > 1 && (
+              <button
+                onClick={() => handleDeleteTestimonial(testimonialsList[testimonialIdx]?.id)}
+                aria-label="Delete testimonial"
+                title="Delete testimonial"
+                style={{
+                  width: 30, height: 30, borderRadius: '50%',
+                  background: 'rgba(15,14,14,0.85)', border: '1px solid #C53A3A',
+                  color: '#C53A3A', fontSize: 14, lineHeight: 1,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  cursor: 'pointer', transition: 'background 0.2s, color 0.2s',
+                }}
+                onMouseEnter={e => { e.currentTarget.style.background = '#C53A3A'; e.currentTarget.style.color = '#F5EFE6' }}
+                onMouseLeave={e => { e.currentTarget.style.background = 'rgba(15,14,14,0.85)'; e.currentTarget.style.color = '#C53A3A' }}
+              >
+                ✕
+              </button>
+            )}
+          </div>
+        )}
+
         <div style={{ position: 'relative', zIndex: 1 }}>
-          {testimonials.map((t, i) => (
+          {testimonialsList.map((t, i) => (
             <div
               key={i}
               style={{
@@ -1630,14 +2089,14 @@ Please contact me.`
           fontFamily: 'Playfair Display, serif', fontSize: 20, color: '#D4AF37',
           overflow: 'hidden',
         }}>
-          {testimonials[testimonialIdx].avatar}
+          {testimonialsList[testimonialIdx].avatar}
         </div>
         <div>
           <div style={{ fontFamily: 'Playfair Display, serif', fontSize: 18, color: '#F5EFE6', marginBottom: 4 }}>
-            {testimonials[testimonialIdx].name}
+            {testimonialsList[testimonialIdx].name}
           </div>
           <div style={{ fontSize: 10, letterSpacing: '0.18em', color: '#9E9B97', textTransform: 'uppercase' }}>
-            {testimonials[testimonialIdx].role}
+            {testimonialsList[testimonialIdx].role}
           </div>
         </div>
       </div>
@@ -1677,13 +2136,28 @@ Please contact me.`
       }}>
         "Our pastry chefs create sweets only<br />with creativity and love"
       </h2>
+
+      {isAdminLoggedIn && !showAddGallery && (
+        <div style={{ marginTop: 28 }}>
+          <button
+            onClick={() => setShowAddGallery(true)}
+            style={{
+              background: 'transparent', border: '1px solid #D4AF37', color: '#D4AF37',
+              fontSize: 10, letterSpacing: '0.18em', textTransform: 'uppercase',
+              padding: '10px 18px', cursor: 'pointer', fontFamily: 'Jost, sans-serif',
+            }}
+          >
+            + Add Gallery Image
+          </button>
+        </div>
+      )}
     </div>
 
     {/* Image grid with diamond frame overlay */}
     <div className="gallery-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 24 }}>
-{[galleryImg1, galleryImg2, galleryImg3, galleryImg4].map((img, i) => (
+{galleryList.map((item, i) => (
   <div
-    key={i}
+    key={item.id ?? i}
     className="gallery-item"
     style={{
       position: 'relative',
@@ -1693,18 +2167,52 @@ Please contact me.`
     }}
   >
     <img
-      src={img}
+      src={item.img}
       alt="Gallery item"
       className="gallery-img"
       style={{ width: '100%', height: '100%', objectFit: 'cover' }}
     />
     {/* Rotated gold diamond frame overlay */}
     <div style={{
-  position: 'absolute', inset: '8%',
-  border: '1px solid #D4AF37',
-  transform: 'rotate(12deg)',
-  pointerEvents: 'none',
-}} />
+        position: 'absolute', inset: '8%',
+        border: '1px solid #D4AF37',
+        transform: 'rotate(12deg)',
+        pointerEvents: 'none',
+      }} />
+    {/* UPDATED: delete button now shows for every gallery image while in
+        admin mode, not just ones that already have a backend id. Images
+        without an id (defaults/fallbacks) get removed from local state;
+        images with an id also get deleted from the backend. */}
+    {isAdminLoggedIn && (
+      <button
+        onClick={(e) => { e.stopPropagation(); handleDeleteGalleryImage(item.id) }}
+        aria-label="Delete gallery image"
+        title="Delete image"
+        style={{
+          position: 'absolute',
+          top: 8,
+          left: 8,
+          width: 30,
+          height: 30,
+          borderRadius: '50%',
+          background: 'rgba(15,14,14,0.85)',
+          border: '1px solid #C53A3A',
+          color: '#C53A3A',
+          fontSize: 14,
+          lineHeight: 1,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          cursor: 'pointer',
+          zIndex: 2,
+          transition: 'background 0.2s, color 0.2s',
+        }}
+        onMouseEnter={e => { e.currentTarget.style.background = '#C53A3A'; e.currentTarget.style.color = '#F5EFE6' }}
+        onMouseLeave={e => { e.currentTarget.style.background = 'rgba(15,14,14,0.85)'; e.currentTarget.style.color = '#C53A3A' }}
+      >
+        ✕
+      </button>
+    )}
   </div>
 ))} 
     </div>
@@ -1899,25 +2407,7 @@ Please contact me.`
         ))}
       </div>
 
-      {/* Column 3 — Latest Posts */}
-      <div>
-        <div style={{ fontFamily: 'Playfair Display, serif', fontStyle: 'italic', fontSize: 22, color: '#D4AF37', marginBottom: 10 }}>Latest Posts</div>
-        <div style={{ width: 50, height: 1, background: 'rgba(212,175,55,0.4)', marginBottom: 28 }} />
-
-        {[
-          { img: galleryImg1, tag: 'Craft Food', title: 'Rent of Equipment for Pastry Shops' },
-          { img: galleryImg2, tag: 'Craft Food', title: 'Secrets of Choosing Cocoa Powder' },
-        ].map((post, i) => (
-          <div key={i} style={{ display: 'flex', gap: 14, marginBottom: 22, alignItems: 'center' }}>
-            <img src={post.img} alt={post.title} style={{ width: 60, height: 60, objectFit: 'cover', flexShrink: 0 }} />
-            <div>
-              <div style={{ fontSize: 9, letterSpacing: '0.15em', color: '#D4AF37', textTransform: 'uppercase', marginBottom: 6 }}>{post.tag}</div>
-              <div style={{ fontFamily: 'Playfair Display, serif', fontSize: 14, color: '#F5EFE6', lineHeight: 1.4 }}>{post.title}</div>
-            </div>
-          </div>
-        ))}
-      </div>
-
+     
     </div>
 
     {/* Bottom wavy divider + copyright */}
@@ -1937,8 +2427,16 @@ Please contact me.`
         © 2026 Sweeter joy Maison de Chocolat. All rights reserved.
       </div>
       <div style={{ display: 'flex', gap: 24 }}>
-        {['Privacy', 'Terms', 'Cookies'].map(l => (
-          <a key={l} href="#" style={{ fontSize: 11, color: '#9E9B97', textDecoration: 'none', letterSpacing: '0.06em', transition: 'color 0.2s' }}
+        {['Privacy', 'Terms'].map(l => (
+          <a
+            key={l}
+            href="#"
+            onClick={(e) => {
+              e.preventDefault()
+              if (l === 'Privacy') setShowPrivacyModal(true)
+              else setShowTermsModal(true)
+            }}
+            style={{ fontSize: 11, color: '#9E9B97', textDecoration: 'none', letterSpacing: '0.06em', transition: 'color 0.2s', cursor: 'pointer' }}
             onMouseEnter={e => ((e.currentTarget as HTMLElement).style.color = '#D4AF37')}
             onMouseLeave={e => ((e.currentTarget as HTMLElement).style.color = '#9E9B97')}
           >{l}</a>
@@ -2015,6 +2513,145 @@ Please contact me.`
       )}
 
       {/* ══════════════════════════════════════════════════════
+          PRIVACY POLICY MODAL
+      ══════════════════════════════════════════════════════ */}
+      {showPrivacyModal && (
+        <div style={{
+          position: 'fixed', inset: 0, zIndex: 10000,
+          background: 'rgba(0,0,0,0.8)', display: 'flex',
+          alignItems: 'center', justifyContent: 'center', padding: 20,
+        }}>
+          <div className="info-modal" style={{
+            background: '#181615', border: '1px solid rgba(212,175,55,0.3)',
+            padding: '48px 40px', width: 560, maxWidth: '100%',
+            maxHeight: '85vh', overflowY: 'auto', position: 'relative',
+          }}>
+            <button
+              onClick={() => setShowPrivacyModal(false)}
+              style={{ position: 'absolute', top: 16, right: 16, background: 'none', border: 'none', color: '#9E9B97', cursor: 'pointer', fontSize: 18 }}
+            >✕</button>
+
+            <div style={{ fontFamily: 'Playfair Display, serif', fontSize: 26, color: '#D4AF37', marginBottom: 24, textAlign: 'center' }}>
+              Privacy Policy
+            </div>
+
+            <div style={{ color: '#C9C6C1', fontSize: 13.5, lineHeight: 1.9 }}>
+              <p style={{ marginBottom: 16 }}>
+                <strong style={{ color: '#F5EFE6' }}>Information We Collect.</strong> When you place an
+                order or contact us, we may collect your name, phone number, delivery address,
+                and any details you share while placing an order via WhatsApp.
+              </p>
+              <p style={{ marginBottom: 16 }}>
+                <strong style={{ color: '#F5EFE6' }}>How We Use Your Information.</strong> We use this
+                information only to process your order, confirm delivery details, and respond
+                to your queries. We do not sell or rent your personal information to third parties.
+              </p>
+              <p style={{ marginBottom: 16 }}>
+                <strong style={{ color: '#F5EFE6' }}>Orders via WhatsApp.</strong> Placing an order
+                redirects you to WhatsApp, which is operated by Meta. Any conversation you have
+                there is subject to WhatsApp's own privacy policy.
+              </p>
+              <p style={{ marginBottom: 16 }}>
+                <strong style={{ color: '#F5EFE6' }}>Cookies.</strong> This website may use basic
+                browser storage to remember cart items or preferences during your visit. No
+                third-party tracking cookies are used.
+              </p>
+              <p style={{ marginBottom: 16 }}>
+                <strong style={{ color: '#F5EFE6' }}>Data Security.</strong> We take reasonable steps
+                to protect the information you share with us, but no method of transmission over
+                the internet is 100% secure.
+              </p>
+              <p>
+                <strong style={{ color: '#F5EFE6' }}>Contact Us.</strong> For any privacy-related
+                questions, reach us at sumitjadhav7778@gmail.com or +91 7038657778.
+              </p>
+            </div>
+
+            <div style={{ textAlign: 'center', marginTop: 28 }}>
+              <button
+                className="btn-luxury btn-luxury-filled"
+                onClick={() => setShowPrivacyModal(false)}
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ══════════════════════════════════════════════════════
+          TERMS & CONDITIONS MODAL
+      ══════════════════════════════════════════════════════ */}
+      {showTermsModal && (
+        <div style={{
+          position: 'fixed', inset: 0, zIndex: 10000,
+          background: 'rgba(0,0,0,0.8)', display: 'flex',
+          alignItems: 'center', justifyContent: 'center', padding: 20,
+        }}>
+          <div className="info-modal" style={{
+            background: '#181615', border: '1px solid rgba(212,175,55,0.3)',
+            padding: '48px 40px', width: 560, maxWidth: '100%',
+            maxHeight: '85vh', overflowY: 'auto', position: 'relative',
+          }}>
+            <button
+              onClick={() => setShowTermsModal(false)}
+              style={{ position: 'absolute', top: 16, right: 16, background: 'none', border: 'none', color: '#9E9B97', cursor: 'pointer', fontSize: 18 }}
+            >✕</button>
+
+            <div style={{ fontFamily: 'Playfair Display, serif', fontSize: 26, color: '#D4AF37', marginBottom: 24, textAlign: 'center' }}>
+              Terms & Conditions
+            </div>
+
+            <div style={{ color: '#C9C6C1', fontSize: 13.5, lineHeight: 1.9 }}>
+              <p style={{ marginBottom: 16 }}>
+                <strong style={{ color: '#F5EFE6' }}>Orders.</strong> All orders placed through this
+                website are confirmed via WhatsApp with our team. An order is considered final
+                only after confirmation from Sweeter Joy.
+              </p>
+              <p style={{ marginBottom: 16 }}>
+                <strong style={{ color: '#F5EFE6' }}>Pricing.</strong> Prices shown on the website are
+                in Indian Rupees (₹) and may change without prior notice. The price confirmed at
+                the time of order will be final.
+              </p>
+              <p style={{ marginBottom: 16 }}>
+                <strong style={{ color: '#F5EFE6' }}>Product Availability.</strong> Since our
+                chocolates are handmade in small batches, availability may vary. We will inform
+                you if an item is out of stock.
+              </p>
+              <p style={{ marginBottom: 16 }}>
+                <strong style={{ color: '#F5EFE6' }}>Delivery.</strong> Delivery timelines are
+                communicated at the time of order confirmation and may vary based on location
+                and demand.
+              </p>
+              <p style={{ marginBottom: 16 }}>
+                <strong style={{ color: '#F5EFE6' }}>Returns & Refunds.</strong> As our products are
+                perishable food items, we do not accept returns once delivered, except in case
+                of a genuine quality issue reported within 24 hours of delivery.
+              </p>
+              <p style={{ marginBottom: 16 }}>
+                <strong style={{ color: '#F5EFE6' }}>Intellectual Property.</strong> All content,
+                images, and branding on this website belong to Sweeter Joy and may not be
+                reproduced without permission.
+              </p>
+              <p>
+                <strong style={{ color: '#F5EFE6' }}>Contact.</strong> For any questions about these
+                terms, contact us at sumitjadhav7778@gmail.com or +91 7038657778.
+              </p>
+            </div>
+
+            <div style={{ textAlign: 'center', marginTop: 28 }}>
+              <button
+                className="btn-luxury btn-luxury-filled"
+                onClick={() => setShowTermsModal(false)}
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ══════════════════════════════════════════════════════
           ADMIN LOGIN MODAL
       ══════════════════════════════════════════════════════ */}
       {showAdminLogin && (
@@ -2048,17 +2685,44 @@ Please contact me.`
                   fontFamily: 'Jost, sans-serif', outline: 'none',
                 }}
               />
-              <input
-                type="password"
-                placeholder="Password"
-                value={adminPass}
-                onChange={e => setAdminPass(e.target.value)}
-                style={{
-                  background: 'transparent', border: '1px solid rgba(212,175,55,0.3)',
-                  padding: '14px 16px', fontSize: 14, color: '#F5EFE6',
-                  fontFamily: 'Jost, sans-serif', outline: 'none',
-                }}
-              />
+              <div style={{ position: 'relative', width: '100%' }}>
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  placeholder="Password"
+                  value={adminPass}
+                  onChange={e => setAdminPass(e.target.value)}
+                  style={{
+                    width: '100%', boxSizing: 'border-box',
+                    background: 'transparent', border: '1px solid rgba(212,175,55,0.3)',
+                    padding: '14px 50px 14px 16px', fontSize: 14, color: '#F5EFE6',
+                    fontFamily: 'Jost, sans-serif', outline: 'none',
+                  }}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(prev => !prev)}
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  style={{
+                    position: 'absolute', right: 16, top: '50%', transform: 'translateY(-50%)',
+                    background: 'none', border: 'none', padding: 0, cursor: 'pointer',
+                    color: '#9E9B97', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  }}
+                >
+                  {showPassword ? (
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M3 3l18 18" />
+                      <path d="M10.6 10.6a2 2 0 0 0 2.8 2.8" />
+                      <path d="M9.9 4.2A10.7 10.7 0 0 1 12 4c5.5 0 9.5 5 10 8a11.8 11.8 0 0 1-2.1 4.1" />
+                      <path d="M6.6 6.6C4.1 8.1 2.4 10.4 2 12c.5 3 4.5 8 10 8a10.6 10.6 0 0 0 4.1-.8" />
+                    </svg>
+                  ) : (
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z" />
+                      <circle cx="12" cy="12" r="3" />
+                    </svg>
+                  )}
+                </button>
+              </div>
 
               {/* Forgot Password link */}
               <div style={{ textAlign: 'right', marginTop: -8 }}>
@@ -2149,10 +2813,16 @@ Please contact me.`
       ══════════════════════════════════════════════════════ */}
       {showAddProduct && isAdminLoggedIn && (
         <div style={{
-          position: 'fixed', inset: 0, zIndex: 10000,
-          background: 'rgba(0,0,0,0.8)', display: 'flex',
-          alignItems: 'center', justifyContent: 'center', padding: 20, overflowY: 'auto',
-        }}>
+  position: "fixed",
+  inset: 0,
+  background: "rgba(0,0,0,0.7)",
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "flex-start",
+  overflowY: "auto",
+  padding: "40px 0",
+  zIndex: 9999,
+}}>
           <div className="add-product-modal" style={{
             background: '#181615', border: '1px solid rgba(212,175,55,0.3)',
             padding: '40px 36px', width: 420, maxWidth: '100%', position: 'relative',
@@ -2202,13 +2872,330 @@ Please contact me.`
                 value={newTag} onChange={e => setNewTag(e.target.value)}
                 style={{ background: 'transparent', border: '1px solid rgba(212,175,55,0.3)', padding: '14px 16px', fontSize: 14, color: '#F5EFE6', fontFamily: 'Jost, sans-serif', outline: 'none' }}
               />
-
+              <input
+                type="text" placeholder="Weight (e.g. 250g, 500g, 1kg)"
+                value={newWeight} onChange={e => setNewWeight(e.target.value)}
+                style={{ background: 'transparent', border: '1px solid rgba(212,175,55,0.3)', padding: '14px 16px', fontSize: 14, color: '#F5EFE6', fontFamily: 'Jost, sans-serif', outline: 'none' }}
+              />
+              <select
+  value={newCategory}
+  onChange={(e) => setNewCategory(e.target.value)}
+  style={{
+    width: '100%',
+    padding: '18px 20px',
+    background: '#181615',
+    color: '#F5EFE6',
+    border: '1px solid rgba(212,175,55,0.25)',
+    outline: 'none',
+    fontSize: '16px',
+    marginTop: '20px',
+    marginBottom: '20px'
+  }}
+>
+  <option value="">Select Category</option>
+  <option value="Plain Chocolate">Plain Chocolate</option>
+  <option value="Dry Fruit">Dry Fruit</option>
+  <option value="Dry Fruit Madi">Dry Fruit Madi</option>
+  <option value="Almond">Almond</option>
+  <option value="Cashews">Cashews</option>
+  <option value="Dates">Dates</option>
+  <option value="Peanuts">Peanuts</option>
+</select>
               {addProductError && (
                 <div style={{ color: '#C53A3A', fontSize: 12, textAlign: 'center' }}>{addProductError}</div>
               )}
 
               <button type="submit" disabled={addProductSubmitting} className="btn-luxury btn-luxury-filled" style={{ marginTop: 8, width: '100%' }}>
                 {addProductSubmitting ? 'Uploading…' : 'Submit →'}
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ══════════════════════════════════════════════════════
+          EDIT STATS MODAL (opens from the "Edit Stats" button in admin mode)
+      ══════════════════════════════════════════════════════ */}
+      {showEditStats && isAdminLoggedIn && (
+        <div style={{
+          position: 'fixed', inset: 0, zIndex: 10000,
+          background: 'rgba(0,0,0,0.8)', display: 'flex',
+          alignItems: 'center', justifyContent: 'center', padding: 20, overflowY: 'auto',
+        }}>
+          <div className="add-product-modal" style={{
+            background: '#181615', border: '1px solid rgba(212,175,55,0.3)',
+            padding: '40px 36px', width: 420, maxWidth: '100%', position: 'relative',
+          }}>
+            <button
+              onClick={() => setShowEditStats(false)}
+              style={{ position: 'absolute', top: 16, right: 16, background: 'none', border: 'none', color: '#9E9B97', cursor: 'pointer', fontSize: 18 }}
+            >✕</button>
+
+            <div style={{ fontFamily: 'Playfair Display, serif', fontSize: 24, color: '#D4AF37', marginBottom: 24, textAlign: 'center' }}>
+              Edit Stats
+            </div>
+
+            <form onSubmit={handleSaveStats} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+              {statsList.map(s => (
+                <div key={s.key}>
+                  <label style={{ fontSize: 11, color: '#9E9B97', letterSpacing: '0.1em', textTransform: 'uppercase' }}>
+                    {s.label}
+                  </label>
+                  <input
+                    type="number"
+                    value={editStatsValues[s.key] ?? ''}
+                    onChange={e => setEditStatsValues(v => ({ ...v, [s.key]: e.target.value }))}
+                    style={{
+                      width: '100%', boxSizing: 'border-box', marginTop: 6,
+                      background: 'transparent', border: '1px solid rgba(212,175,55,0.3)',
+                      padding: '14px 16px', fontSize: 14, color: '#F5EFE6',
+                      fontFamily: 'Jost, sans-serif', outline: 'none',
+                    }}
+                  />
+                </div>
+              ))}
+
+              {statsSaveError && (
+                <div style={{ color: '#C53A3A', fontSize: 12, textAlign: 'center' }}>{statsSaveError}</div>
+              )}
+
+              <button type="submit" disabled={statsSaving} className="btn-luxury btn-luxury-filled" style={{ marginTop: 8, width: '100%' }}>
+                {statsSaving ? 'Saving…' : 'Save →'}
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ══════════════════════════════════════════════════════
+          EDIT TESTIMONIAL MODAL (opens from the ✎ button on the testimonial card)
+      ══════════════════════════════════════════════════════ */}
+      {showEditTestimonial && isAdminLoggedIn && (
+        <div style={{
+          position: 'fixed', inset: 0, zIndex: 10000,
+          background: 'rgba(0,0,0,0.8)', display: 'flex',
+          alignItems: 'center', justifyContent: 'center', padding: 20, overflowY: 'auto',
+        }}>
+          <div className="add-product-modal" style={{
+            background: '#181615', border: '1px solid rgba(212,175,55,0.3)',
+            padding: '40px 36px', width: 460, maxWidth: '100%', position: 'relative',
+          }}>
+            <button
+              onClick={() => setShowEditTestimonial(false)}
+              style={{ position: 'absolute', top: 16, right: 16, background: 'none', border: 'none', color: '#9E9B97', cursor: 'pointer', fontSize: 18 }}
+            >✕</button>
+
+            <div style={{ fontFamily: 'Playfair Display, serif', fontSize: 24, color: '#D4AF37', marginBottom: 24, textAlign: 'center' }}>
+              Edit Testimonial
+            </div>
+
+            <form onSubmit={handleSaveTestimonial} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+              <div>
+                <label style={{ fontSize: 11, color: '#9E9B97', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Quote</label>
+                <textarea
+                  value={editTestimonialText}
+                  onChange={e => setEditTestimonialText(e.target.value)}
+                  rows={5}
+                  style={{
+                    width: '100%', boxSizing: 'border-box', marginTop: 6,
+                    background: 'transparent', border: '1px solid rgba(212,175,55,0.3)',
+                    padding: '14px 16px', fontSize: 14, color: '#F5EFE6',
+                    fontFamily: 'Jost, sans-serif', outline: 'none', resize: 'vertical',
+                  }}
+                />
+              </div>
+              <div>
+                <label style={{ fontSize: 11, color: '#9E9B97', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Name</label>
+                <input
+                  type="text"
+                  value={editTestimonialName}
+                  onChange={e => setEditTestimonialName(e.target.value)}
+                  style={{
+                    width: '100%', boxSizing: 'border-box', marginTop: 6,
+                    background: 'transparent', border: '1px solid rgba(212,175,55,0.3)',
+                    padding: '14px 16px', fontSize: 14, color: '#F5EFE6',
+                    fontFamily: 'Jost, sans-serif', outline: 'none',
+                  }}
+                />
+              </div>
+              <div>
+                <label style={{ fontSize: 11, color: '#9E9B97', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Role / Company</label>
+                <input
+                  type="text"
+                  value={editTestimonialRole}
+                  onChange={e => setEditTestimonialRole(e.target.value)}
+                  style={{
+                    width: '100%', boxSizing: 'border-box', marginTop: 6,
+                    background: 'transparent', border: '1px solid rgba(212,175,55,0.3)',
+                    padding: '14px 16px', fontSize: 14, color: '#F5EFE6',
+                    fontFamily: 'Jost, sans-serif', outline: 'none',
+                  }}
+                />
+              </div>
+              <div>
+                <label style={{ fontSize: 11, color: '#9E9B97', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Avatar Initials (e.g. SK)</label>
+                <input
+                  type="text"
+                  maxLength={3}
+                  value={editTestimonialAvatar}
+                  onChange={e => setEditTestimonialAvatar(e.target.value.toUpperCase())}
+                  style={{
+                    width: '100%', boxSizing: 'border-box', marginTop: 6,
+                    background: 'transparent', border: '1px solid rgba(212,175,55,0.3)',
+                    padding: '14px 16px', fontSize: 14, color: '#F5EFE6',
+                    fontFamily: 'Jost, sans-serif', outline: 'none', letterSpacing: '0.1em',
+                  }}
+                />
+              </div>
+
+              {editTestimonialError && (
+                <div style={{ color: '#C53A3A', fontSize: 12, textAlign: 'center' }}>{editTestimonialError}</div>
+              )}
+
+              <button type="submit" disabled={editTestimonialSaving} className="btn-luxury btn-luxury-filled" style={{ marginTop: 8, width: '100%' }}>
+                {editTestimonialSaving ? 'Saving…' : 'Save →'}
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ══════════════════════════════════════════════════════
+          ADD TESTIMONIAL MODAL (opens from the + button on the testimonial card)
+      ══════════════════════════════════════════════════════ */}
+      {showAddTestimonial && isAdminLoggedIn && (
+        <div style={{
+          position: 'fixed', inset: 0, zIndex: 10000,
+          background: 'rgba(0,0,0,0.8)', display: 'flex',
+          alignItems: 'center', justifyContent: 'center', padding: 20, overflowY: 'auto',
+        }}>
+          <div className="add-product-modal" style={{
+            background: '#181615', border: '1px solid rgba(212,175,55,0.3)',
+            padding: '40px 36px', width: 460, maxWidth: '100%', position: 'relative',
+          }}>
+            <button
+              onClick={() => setShowAddTestimonial(false)}
+              style={{ position: 'absolute', top: 16, right: 16, background: 'none', border: 'none', color: '#9E9B97', cursor: 'pointer', fontSize: 18 }}
+            >✕</button>
+
+            <div style={{ fontFamily: 'Playfair Display, serif', fontSize: 24, color: '#D4AF37', marginBottom: 24, textAlign: 'center' }}>
+              Add Testimonial
+            </div>
+
+            <form onSubmit={handleAddTestimonial} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+              <div>
+                <label style={{ fontSize: 11, color: '#9E9B97', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Quote</label>
+                <textarea
+                  value={newTestimonialText}
+                  onChange={e => setNewTestimonialText(e.target.value)}
+                  rows={5}
+                  style={{
+                    width: '100%', boxSizing: 'border-box', marginTop: 6,
+                    background: 'transparent', border: '1px solid rgba(212,175,55,0.3)',
+                    padding: '14px 16px', fontSize: 14, color: '#F5EFE6',
+                    fontFamily: 'Jost, sans-serif', outline: 'none', resize: 'vertical',
+                  }}
+                />
+              </div>
+              <div>
+                <label style={{ fontSize: 11, color: '#9E9B97', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Name</label>
+                <input
+                  type="text"
+                  value={newTestimonialName}
+                  onChange={e => setNewTestimonialName(e.target.value)}
+                  style={{
+                    width: '100%', boxSizing: 'border-box', marginTop: 6,
+                    background: 'transparent', border: '1px solid rgba(212,175,55,0.3)',
+                    padding: '14px 16px', fontSize: 14, color: '#F5EFE6',
+                    fontFamily: 'Jost, sans-serif', outline: 'none',
+                  }}
+                />
+              </div>
+              <div>
+                <label style={{ fontSize: 11, color: '#9E9B97', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Role / Company</label>
+                <input
+                  type="text"
+                  value={newTestimonialRole}
+                  onChange={e => setNewTestimonialRole(e.target.value)}
+                  style={{
+                    width: '100%', boxSizing: 'border-box', marginTop: 6,
+                    background: 'transparent', border: '1px solid rgba(212,175,55,0.3)',
+                    padding: '14px 16px', fontSize: 14, color: '#F5EFE6',
+                    fontFamily: 'Jost, sans-serif', outline: 'none',
+                  }}
+                />
+              </div>
+              <div>
+                <label style={{ fontSize: 11, color: '#9E9B97', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Avatar Initials (e.g. SK)</label>
+                <input
+                  type="text"
+                  maxLength={3}
+                  value={newTestimonialAvatar}
+                  onChange={e => setNewTestimonialAvatar(e.target.value.toUpperCase())}
+                  style={{
+                    width: '100%', boxSizing: 'border-box', marginTop: 6,
+                    background: 'transparent', border: '1px solid rgba(212,175,55,0.3)',
+                    padding: '14px 16px', fontSize: 14, color: '#F5EFE6',
+                    fontFamily: 'Jost, sans-serif', outline: 'none', letterSpacing: '0.1em',
+                  }}
+                />
+              </div>
+
+              {addTestimonialError && (
+                <div style={{ color: '#C53A3A', fontSize: 12, textAlign: 'center' }}>{addTestimonialError}</div>
+              )}
+
+              <button type="submit" disabled={addTestimonialSubmitting} className="btn-luxury btn-luxury-filled" style={{ marginTop: 8, width: '100%' }}>
+                {addTestimonialSubmitting ? 'Adding…' : 'Add →'}
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* ══════════════════════════════════════════════════════
+          ADD GALLERY IMAGE MODAL (opens from "+ Add Gallery Image" in admin mode)
+      ══════════════════════════════════════════════════════ */}
+      {showAddGallery && isAdminLoggedIn && (
+        <div style={{
+          position: 'fixed', inset: 0, zIndex: 10000,
+          background: 'rgba(0,0,0,0.8)', display: 'flex',
+          alignItems: 'center', justifyContent: 'center', padding: 20, overflowY: 'auto',
+        }}>
+          <div className="add-product-modal" style={{
+            background: '#181615', border: '1px solid rgba(212,175,55,0.3)',
+            padding: '40px 36px', width: 420, maxWidth: '100%', position: 'relative',
+          }}>
+            <button
+              onClick={() => { setShowAddGallery(false); resetAddGalleryForm() }}
+              style={{ position: 'absolute', top: 16, right: 16, background: 'none', border: 'none', color: '#9E9B97', cursor: 'pointer', fontSize: 18 }}
+            >✕</button>
+
+            <div style={{ fontFamily: 'Playfair Display, serif', fontSize: 24, color: '#D4AF37', marginBottom: 24, textAlign: 'center' }}>
+              Add Gallery Image
+            </div>
+
+            <form onSubmit={handleAddGalleryImage} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+
+              <label style={{
+                border: '1px dashed rgba(212,175,55,0.4)', height: 180,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                cursor: 'pointer', overflow: 'hidden', position: 'relative',
+              }}>
+                {newGalleryPreview ? (
+                  <img src={newGalleryPreview} alt="preview" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                ) : (
+                  <span style={{ fontSize: 12, color: '#9E9B97', letterSpacing: '0.05em' }}>Click to upload gallery image</span>
+                )}
+                <input type="file" accept="image/*" onChange={handleGalleryImageUpload} style={{ display: 'none' }} />
+              </label>
+
+              {addGalleryError && (
+                <div style={{ color: '#C53A3A', fontSize: 12, textAlign: 'center' }}>{addGalleryError}</div>
+              )}
+
+              <button type="submit" disabled={addGallerySubmitting} className="btn-luxury btn-luxury-filled" style={{ marginTop: 8, width: '100%' }}>
+                {addGallerySubmitting ? 'Uploading…' : 'Submit →'}
               </button>
             </form>
           </div>

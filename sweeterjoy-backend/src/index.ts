@@ -4,6 +4,9 @@ import dotenv from 'dotenv';
 import adminRoutes from './routes/admin';
 import productRoutes from './routes/products';
 import { sendOtpEmail, sendContactEmail } from './mailer';
+import statsRoutes from './routes/stats';
+import galleryRoutes from './routes/gallery';
+import testimonialsRoutes from './routes/testimonials';
 
 dotenv.config();
 const app = express();
@@ -37,7 +40,9 @@ app.use(express.json());
 
 app.use('/api/admin', adminRoutes);
 app.use('/api/products', productRoutes);
-
+app.use('/api/stats', statsRoutes);
+app.use('/api/gallery', galleryRoutes);
+app.use('/api/testimonials', testimonialsRoutes);
 
 app.post('/api/contact', async (req, res) => {
   try {
