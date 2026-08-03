@@ -9,7 +9,7 @@ import galleryImg2 from './assets/products/images2.jpeg'
 import galleryImg3 from './assets/products/images3.jpeg'
 import galleryImg4 from './assets/products/images4.jpeg'
 import sweeterJoyLogo from './assets/products/SweeterJoyLogo.png'
-import phronixLogo from './assets/products/PhronixLogo.jpeg'
+import phronixLogo from './assets/products/Phronixlogo.jpeg'
 // ── Hero slides ──────────────────────────────────────────────────────────────
 const heroSlides = [
   {
