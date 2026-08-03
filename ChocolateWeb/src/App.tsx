@@ -685,8 +685,8 @@ export default function App() {
   async function handleAddProduct(e: React.FormEvent) {
     e.preventDefault()
     setAddProductError('')
-   if (!newName || !newPrice || !newCategory || !newImageFile) {
-  setAddProductError("Name, Category, Price and Image are required");
+   if (!newName || !newCategory || !newImageFile) {
+  setAddProductError("Name, Category and Image are required");
   return;
 }
     const token = localStorage.getItem('admin_token')
@@ -986,8 +986,7 @@ async function addToCart(product: Product) {
 
   const message = `Hi, I want this Chocolate:
 
-*${product.name}*
-Price: ${product.price}${product.weight ? `\nWeight: ${product.weight}` : ''}
+*${product.name}*${product.price ? `\nPrice: ${product.price}` : ''}${product.weight ? `\nWeight: ${product.weight}` : ''}
 
 ${product.img}
 
@@ -1688,38 +1687,6 @@ Please contact me.`
                     }}
                   >
                     {product.name}
-                  </div>
-
-                  <div
-                    style={{
-                      display: 'flex',
-                      gap: 10,
-                      alignItems: 'baseline',
-                      justifyContent: 'center',
-                    }}
-                  >
-                    <span
-                      style={{
-                        fontSize: 16,
-                        color: '#D4AF37',
-                        fontWeight: 500,
-                      }}
-                    >
-                      {product.price}
-                    </span>
-
-                    {'originalPrice' in product &&
-                      product.originalPrice && (
-                        <span
-                          style={{
-                            fontSize: 13,
-                            color: '#9E9B97',
-                            textDecoration: 'line-through',
-                          }}
-                        >
-                          {product.originalPrice}
-                        </span>
-                      )}
                   </div>
 
                   {product.weight && (
@@ -2844,7 +2811,7 @@ Please contact me.`
                 style={{ background: 'transparent', border: '1px solid rgba(212,175,55,0.3)', padding: '14px 16px', fontSize: 14, color: '#F5EFE6', fontFamily: 'Jost, sans-serif', outline: 'none' }}
               />
               <input
-                type="text" placeholder="Price (e.g. ₹120)"
+                type="text" placeholder="Price (optional, e.g. ₹120)"
                 value={newPrice} onChange={e => setNewPrice(e.target.value)}
                 style={{ background: 'transparent', border: '1px solid rgba(212,175,55,0.3)', padding: '14px 16px', fontSize: 14, color: '#F5EFE6', fontFamily: 'Jost, sans-serif', outline: 'none' }}
               />
