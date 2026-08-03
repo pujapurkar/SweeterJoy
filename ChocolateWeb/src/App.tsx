@@ -1745,9 +1745,7 @@ Please contact me.`
               marginTop: 56,
             }}
           >
-            <button className="btn-luxury">
-              Online Store →
-            </button>
+           
           </div>
         </div>
       </section>
