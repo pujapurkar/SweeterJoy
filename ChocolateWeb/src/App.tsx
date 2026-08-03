@@ -9,7 +9,7 @@ import galleryImg2 from './assets/products/images2.jpeg'
 import galleryImg3 from './assets/products/images3.jpeg'
 import galleryImg4 from './assets/products/images4.jpeg'
 import sweeterJoyLogo from './assets/products/SweeterJoyLogo.png'
-import phronixLogo from './assets/products/SweeterJoyLogo.png'
+import phronixLogo from './assets/products/PhronixLogo.jpeg'
 // ── Hero slides ──────────────────────────────────────────────────────────────
 const heroSlides = [
   {
@@ -41,6 +41,7 @@ type Product = {
   originalPrice?: string
   tag?: string | null
   weight?: string | null
+  category?: string | null
 }
 
 const products: Product[] = [
@@ -134,7 +135,7 @@ const navItems = [
   },
   {
     label: 'Category',
-    items: ['Plain chocolate', 'Dry fruit', 'Dry fruit madi', 'Almond', 'Cashews', 'Dates', 'Peanuts'],
+    items: ['Plain Chocolate', 'Dry Fruit', 'Dry Fruit Madi', 'Almond', 'Cashews', 'Dates', 'Peanuts'],
   },
   { label: 'Contact', items: [] },
 ]
@@ -276,6 +277,7 @@ export default function App() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
   const [cartCount, setCartCount] = useState(0)
   const [addedItem, setAddedItem] = useState<string | null>(null)
   const [videoPlaying, setVideoPlaying] = useState(false)
@@ -673,6 +675,7 @@ export default function App() {
           originalPrice: p.original_price || undefined,
           tag: p.tag || null,
           weight: p.weight || null,
+          category: p.category || null,
         }))
       )
     } catch (err) {
@@ -1017,19 +1020,26 @@ Please contact me.`
     if (id) document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' })
   }
 
+  const categoryLabels = ['Plain Chocolate', 'Dry Fruit', 'Dry Fruit Madi', 'Almond', 'Cashews', 'Dates', 'Peanuts']
+
   // Handles clicks on nav dropdown sub-items. "Admin Profile" opens the
-  // Admin Login modal instead of scrolling to a section.
+  // Admin Login modal, category labels filter the product grid, everything
+  // else scrolls to its matching section.
   function handleNavSubClick(label: string) {
     if (label === 'Admin Profile') {
       setShowAdminLogin(true)
+    } else if (categoryLabels.includes(label)) {
+      setSelectedCategory(label)
+      setSearchQuery('')
+      document.getElementById('products-section')?.scrollIntoView({ behavior: 'smooth' })
     } else {
       scrollToSection(label)
     }
   }
 
-  const filteredProducts = searchQuery.trim()
-    ? productList.filter(p => p.name.toLowerCase().includes(searchQuery.trim().toLowerCase()))
-    : productList
+  const filteredProducts = productList
+    .filter(p => !searchQuery.trim() || p.name.toLowerCase().includes(searchQuery.trim().toLowerCase()))
+    .filter(p => !selectedCategory || p.category === selectedCategory)
 
   const current = heroSlides[slide]
 
@@ -1548,6 +1558,24 @@ Please contact me.`
             >
               <GoldWave />
             </div>
+
+            {selectedCategory && (
+              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 10, marginBottom: 8 }}>
+                <span style={{ fontSize: 11, letterSpacing: '0.1em', color: '#9E9B97', textTransform: 'uppercase' }}>
+                  Showing: <span style={{ color: '#D4AF37' }}>{selectedCategory}</span>
+                </span>
+                <button
+                  onClick={() => setSelectedCategory(null)}
+                  style={{
+                    background: 'transparent', border: '1px solid rgba(212,175,55,0.4)', color: '#D4AF37',
+                    fontSize: 10, letterSpacing: '0.1em', textTransform: 'uppercase',
+                    padding: '4px 10px', cursor: 'pointer', fontFamily: 'Jost, sans-serif',
+                  }}
+                >
+                  Clear ✕
+                </button>
+              </div>
+            )}
           </div>
 
           <div
@@ -1559,7 +1587,11 @@ Please contact me.`
           >
             {filteredProducts.length === 0 ? (
               <div style={{ gridColumn: '1 / -1', textAlign: 'center', color: '#9E9B97', padding: '30px 0' }}>
-                No chocolates found for "{searchQuery}"
+                {searchQuery.trim()
+                  ? `No chocolates found for "${searchQuery}"`
+                  : selectedCategory
+                    ? `No chocolates found in "${selectedCategory}"`
+                    : 'No chocolates available right now'}
               </div>
             ) : (
             filteredProducts.map(product => (
