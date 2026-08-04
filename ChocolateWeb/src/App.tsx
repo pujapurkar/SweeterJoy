@@ -2198,14 +2198,7 @@ Please contact me.`
     )}
   </div>
 ))} 
-    </div>
-
-    {/* Read More button */}
-    <div style={{ textAlign: 'center', marginTop: 56 }}>
-      <button className="btn-luxury" onClick={() => setShowInfoModal(true)}>
-        Read More <span style={{ fontSize: 14 }}>→</span>
-      </button>
-    </div>
+    </div>  
   </div>
 </section>
 
