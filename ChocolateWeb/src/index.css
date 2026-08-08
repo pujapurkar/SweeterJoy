@@ -358,6 +358,22 @@ body {
   .mobile-hamburger {
     display: flex !important;
   }
+
+  /* Contact form "Your Name" / "Your Email" boxes on mobile only.
+     The real culprit: App.tsx sets inline `flex: '1 1 220px'` on
+     these inputs. On desktop the form row is horizontal, so that
+     220px controls WIDTH. But on mobile .contact-form-row switches
+     to flex-direction: column, so the main axis flips to vertical —
+     and that same 220px then controls HEIGHT instead, blowing up
+     the box. Setting flex:none removes that, then height/padding
+     take effect normally. */
+  .contact-form-row input.contact-input {
+    flex: none !important;
+    width: 100% !important;
+    height: 40px !important;
+    padding: 0 14px !important;
+    box-sizing: border-box !important;
+  }
 }
 
 /* General phone/tablet breakpoint */
