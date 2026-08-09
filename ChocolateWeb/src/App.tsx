@@ -10,22 +10,19 @@ import galleryImg3 from './assets/products/images3.jpeg'
 import galleryImg4 from './assets/products/images4.jpeg'
 import sweeterJoyLogo from './assets/products/SweeterJoyLogo.png'
 import phronixLogo from './assets/products/Phronixlogo.jpeg'
+import heroSlide1 from './assets/products/hero-slide1.jpeg'
+import heroSlide2 from './assets/products/hero-slide2.jpeg'
 // ── Hero slides ──────────────────────────────────────────────────────────────
 const heroSlides = [
   {
-    img: 'https://images.unsplash.com/photo-1523035274455-b2e5c6d5c2e0?w=1920&h=1080&fit=crop&auto=format',
+    img: heroSlide1,
     heading: "Homemade Chocolates,\nMade with Love",
     sub: 'Freshly handmade in small batches, packed with care, and made to add a little sweetness to every special moment.',
   },
   {
-    img: 'https://images.unsplash.com/photo-1458253756247-1e4ed949191b?w=1920&h=1080&fit=crop&auto=format',
+    img: heroSlide2,
     heading: 'A Little Joy\nIn Every Bite',
     sub: 'From classic chocolates to crunchy dry-fruit favourites, every piece is made with care for you and your loved ones.',
-  },
-  {
-    img: 'https://images.unsplash.com/photo-1542843137-8791a6904d14?w=1920&h=1080&fit=crop&auto=format',
-    heading: 'Sweet Gifts for\nSpecial Moments',
-    sub: 'Birthdays, festivals, celebrations or just because — make the moment sweeter with handcrafted chocolates from Sweeter Joy.',
   },
 ]
 
