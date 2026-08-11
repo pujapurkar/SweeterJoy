@@ -3185,10 +3185,22 @@ filteredProducts.map(product => (
 
 // ── FAQ Accordion ─────────────────────────────────────────────────────────────
 const faqs = [
-  { q: 'What makes your chocolate different from artisan competitors?', a: 'We source exclusively from single-origin farms in Ecuador, Venezuela, and Madagascar — estates we visit annually. Our beans are fermented on-site, roasted in-house at low temperature, and hand-tempered by our chocolatiers. No additives, no shortcuts.' },
-  { q: 'Do you ship internationally?', a: 'Yes. All orders ship worldwide in climate-controlled packaging with dry ice inserts to maintain 18°C. Free shipping on orders above €200.' },
-  { q: 'Can I customise a gift box?', a: 'Absolutely. Our atelier team can personalise packaging, create monogrammed foil wrappers, and curate selections by flavour profile, dietary requirement, or occasion. Contact us at least 5 days in advance for bespoke orders.' },
-  { q: 'Are your products suitable for dietary restrictions?', a: 'Our dark chocolate range is naturally vegan and gluten-free. We offer sugar-free and nut-free collections. Full allergen information is printed on every product and available on our website.' },
+  {
+    q: 'What makes your chocolate different from others?',
+    a: 'Our chocolates are homemade and made in small batches. We use good-quality ingredients and prepare every chocolate with care, so the taste feels fresh and special.'
+  },
+  {
+    q: 'Do you deliver outside Nashik?',
+    a: 'Yes, we can deliver to other cities as well. Delivery charges and delivery time may depend on your location.'
+  },
+  {
+    q: 'Can I order chocolates for birthdays or gifts?',
+    a: 'Yes! We take gift orders for birthdays, festivals, anniversaries, and other special occasions. We can also pack them beautifully for gifting.'
+  },
+  {
+    q: 'Do you have sugar-free or special chocolates?',
+    a: 'We have some special chocolate options, and we keep adding new varieties. Please contact us before ordering to know the available options.'
+  },
 ]
 
 function FAQ() {
