@@ -297,7 +297,7 @@ export default function App() {
   // productList now comes from the backend (Postgres via the Express API),
   // not localStorage — the static `products` array is kept only as a
   // fallback if the fetch fails so the page never renders empty.
-  const [productList, setProductList] = useState<Product[]>(products)
+  const [productList, setProductList] = useState<Product[]>([])
   const [productsLoading, setProductsLoading] = useState(true)
   const [showAdminLogin, setShowAdminLogin] = useState(false)
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState(false)
@@ -1582,16 +1582,20 @@ Please contact me.`
               gap: 24,
             }}
           >
-            {filteredProducts.length === 0 ? (
-              <div style={{ gridColumn: '1 / -1', textAlign: 'center', color: '#9E9B97', padding: '30px 0' }}>
-                {searchQuery.trim()
-                  ? `No chocolates found for "${searchQuery}"`
-                  : selectedCategory
-                    ? `No chocolates found in "${selectedCategory}"`
-                    : 'No chocolates available right now'}
-              </div>
-            ) : (
-            filteredProducts.map(product => (
+            {productsLoading ? (
+  <div style={{ gridColumn: '1 / -1', textAlign: 'center', color: '#9E9B97', padding: '30px 0' }}>
+    Loading chocolates…
+  </div>
+) : filteredProducts.length === 0 ? (
+  <div style={{ gridColumn: '1 / -1', textAlign: 'center', color: '#9E9B97', padding: '30px 0' }}>
+    {searchQuery.trim()
+      ? `No chocolates found for "${searchQuery}"`
+      : selectedCategory
+        ? `No chocolates found in "${selectedCategory}"`
+        : 'No chocolates available right now'}
+  </div>
+) : (
+filteredProducts.map(product => (
               <div
                 key={product.id ?? product.name}
                 className="product-card"
